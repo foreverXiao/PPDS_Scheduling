@@ -1,0 +1,146 @@
+div.DragContainer 
+{
+    border-color:Blue;background-color:transparent;border: 0px solid black;margin:0px 0px;left:0px;top:70px; position:absolute;width:auto;
+}
+
+div.DragBox 
+{
+    border:1px solid red;
+    background-color:Aqua;
+    margin:1px 1px 1px 1px;
+    width:auto;
+}
+
+div
+{
+    font-size:small;
+    font-family:Arial;
+    border:0px solid purple;
+    background-color:silver;
+	margin:0px 0px 0px 0px;
+    width:auto;
+    text-indent:0px;
+}
+
+div.sc
+{
+    position:absolute;
+    /* float:left; */
+    height:1.2em;
+    border-color: black;
+    border-style:solid;
+    border-width: 1px 1px 1px 1px;
+    margin-right:-1px;
+    background-color:White;
+    z-index:1;
+}
+
+div#scalar 
+{
+    border: 0px solid black;z-index:1;position:fixed;background-color:white;top:3.6em;
+}
+
+
+div.bg
+{
+    position:absolute;
+    /*float:left; */
+    height:100%;
+    border-color: #a5a5a5;
+    border-style: dotted;
+    border-width:  0px  0px 0px 1px;
+    margin-right:-1px;
+    background-color:transparent;
+}
+
+div#bckgrndImg
+{
+    border: 0px solid black;z-index:-1;background-color:transparent;top:3.6em;position:fixed;height:100%;
+}
+
+div.grade
+{
+    font-size:small;
+    border:0px solid purple;
+    background-color:white;
+	margin:0px 0px 0px 0px;
+    width:auto;
+    text-indent:0px;
+}
+
+div.ordersBox
+{
+    border:0px solid ;
+    border-color:Purple;
+    background-color:Silver;
+	margin:0px 0px 0px 0px;
+    width:auto;
+}
+
+span 
+{
+    border-color:red;
+    background-color:transparent;
+}
+
+
+.linemenu
+{
+    font-size:medium;
+    border: 2px solid black;
+    white-space: normal;
+    margin:5px 0px 0px 2px;
+    background-color:blue;
+    text-align:center;
+    padding:1px;
+    width:20px;
+    height:auto;
+}
+
+body{margin:0px;}
+
+/* Mark for pulling screw */
+.sw {position:absolute;white-space:pre;} 
+.sw span {color:silver;position:relative;white-space:pre;font-weight:lighter;font-size:90%;}
+div#ganttZone {white-space: nowrap;} 
+
+/* context menu style */
+.cmenu {margin: 0; padding: 0.3em; list-style-type: none; background-color: white;border:1px solid black;} 
+.cmenu div li input button {width:10px;}
+.cmenu li {width:170px;}
+.cmenu li:hover {}  
+.cmenu hr {border: 0; border-bottom: 1px solid grey; margin: 3px 0px 3px 0px; width: 10em;}
+.cmenu a {border: 0 !important;}
+.cmenu a:hover {text-decoration: underline !important;} 
+.cmenu .topSep {font-size: 90%; border-top: 1px solid gray; margin-top: 0.3em; padding-top: 0.3em;}
+div#dateTextContainer {background-color: white;}
+div#dateTextContainer input {border-width:2px;width:130px;height:18px;font-size:12px;text-align:left;}
+div#dateTextContainer button {width:22px;height:19px;text-align:center;}
+div#dateTextContainer button img {width:13px;height:10px;}
+
+a {border: 0 !important;}
+a:link {color: blue;}
+a:visited {color: purple;}
+a:hover {text-decoration: underline !important;color:red;}
+a:active {color: yellow;}
+
+.arrow-right 
+{   
+    width:0px; 
+	height:0px; 
+	border-bottom:8px solid transparent;  /* left arrow slant */
+	border-top:8px solid transparent; /* right arrow slant */
+	/* border-left:10px solid #2f2f2f; /* bottom, add background color here */
+	font-size:0px;
+	line-height:0px;
+}
+
+#x
+{
+color:red;
+}
+
+#y
+{
+color:blue;
+}
