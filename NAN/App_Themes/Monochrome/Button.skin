@@ -1,0 +1,2 @@
+﻿<asp:Button CssClass="MyButton" BackColor="#cccccc" runat="server" />
+<asp:Button SkinID="RedButton" BackColor="Red" ForeColor="Black" runat="server" />
