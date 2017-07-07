@@ -205,7 +205,7 @@
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
         ConnectionString="Provider=SQLNCLI11;Data Source=cn17-38v2bx1\SQLEXPRESS;Password=Pa55word;User ID=sa;Initial Catalog=eSchedule_NAN" 
-        ProviderName="System.Data.OleDb"
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_MTI_List] ORDER BY [txt_MTI_item]" 

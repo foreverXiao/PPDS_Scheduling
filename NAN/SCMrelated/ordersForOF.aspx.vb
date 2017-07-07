@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -254,10 +254,10 @@ Partial Class SCMrelated_ordersForOF
 
         Dim start As DateTime = CDate(earlierTime.Text).AddHours(ddlHour1.SelectedIndex).AddMinutes(ddlMinute1.SelectedIndex)
         Dim finish As DateTime = CDate(laterTime.Text).AddHours(ddlHour2.SelectedIndex).AddMinutes(ddlMinute2.SelectedIndex)
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
-        'Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_item_no,planned_production_qty,dat_start_date,dat_finish_date,int_line_no,txt_lot_no,txt_order_key,txt_local_so,int_span,txt_end_user,flt_working_hours,int_change_over_time,txt_grade,dat_new_explant,dat_etd,dat_rdd,dat_order_added From Esch_Na_tbl_orders " &
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * From Esch_Na_tbl_orders " &
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
+        'Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_item_no,planned_production_qty,dat_start_date,dat_finish_date,int_line_no,txt_lot_no,txt_order_key,txt_local_so,int_span,txt_end_user,flt_working_hours,int_change_over_time,txt_grade,dat_new_explant,dat_etd,dat_rdd,dat_order_added From Esch_Na_tbl_orders " &
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT * From Esch_Na_tbl_orders " &
                                                                    " WHERE ((dat_start_date between " & dateSeparator & start & dateSeparator & " And " & dateSeparator & finish & dateSeparator & ") Or " &
                                                                    "(dat_finish_date between " & dateSeparator & start & dateSeparator & " And " & dateSeparator & finish & dateSeparator & "))  Or (CAST(int_line_no as VARCHAR(5)) = '" & valueOf("intDummyLine") & "')" &
                                                                     " ORDER BY int_line_no,dat_start_date", conn)
@@ -269,7 +269,7 @@ Partial Class SCMrelated_ordersForOF
         dtAdapter1.Fill(_dtTable)
 
 
-        'Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        'Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         'Dim hasException As Boolean = False
         'finishTime_exPlantDate_Span1(connParam, _dtTable.Select(Nothing), hasException)
 

@@ -202,8 +202,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=E:\IIS\Test\App_Data\db_Resin.mdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=E:\IIS\Test\App_Data\db_Resin.mdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT [POD], [TypicalPOD], [txtRemark] FROM [Esch_Na_tbl_same_POD_list_for_combination]" 

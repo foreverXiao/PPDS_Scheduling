@@ -44,26 +44,16 @@
     <br />
     <br />
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ProviderName="System.Data.OleDb"
-        ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\inetpub\wwwroot\test\App_Data\param.accdb;" 
-        DeleteCommand="DELETE FROM [Esch_Na_tbl_userrole] WHERE ([user_name] = ?)"   
+        ProviderName="System.Data.SqlClient"
+        ConnectionString="Provider=Microsoft.ACE.OleDb.12.0;Data Source=C:\inetpub\wwwroot\test\App_Data\param.accdb;" 
+        DeleteCommand="DELETE FROM [Esch_Na_tbl_userrole] WHERE ([user_name] = @user_name)"   
         
         SelectCommand="SELECT [user_name], [rightlevel], [user_description] FROM [Esch_Na_tbl_userrole] ORDER BY [rightlevel], [user_name]" 
-        InsertCommand="INSERT INTO [Esch_Na_tbl_userrole] ([user_name], [rightlevel], [user_description]) VALUES (?, ?, ?)" 
-        UpdateCommand="UPDATE [Esch_Na_tbl_userrole] SET [rightlevel] = ?, [user_description] = ? WHERE ([user_name] = ?)">
+>
         <DeleteParameters>
             <asp:Parameter Name="user_name" Type="String" />
         </DeleteParameters>
-        <InsertParameters>
-            <asp:Parameter Name="user_name" Type="String" />
-            <asp:Parameter Name="rightlevel" Type="Int16" />
-            <asp:Parameter Name="user_description" Type="String" />
-        </InsertParameters>
-        <UpdateParameters>
-            <asp:Parameter Name="rightlevel" Type="Int16" />
-            <asp:Parameter Name="user_description" Type="String" />
-            <asp:Parameter Name="user_name" Type="String" />
-        </UpdateParameters>
+
     </asp:SqlDataSource>
 </asp:Content>
 

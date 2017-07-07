@@ -244,8 +244,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|\param.accdb;Persist Security Info=True" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.ACE.OleDb.12.0;Data Source=|DataDirectory|\param.accdb;Persist Security Info=True" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_production_lines_and_batch_no_group]" 

@@ -1,4 +1,4 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 Imports System.IO
 Imports System.Data
 
@@ -12,10 +12,10 @@ Partial Class SCMrelated_ExportForGoldenRuleReport
 
     Protected Sub Page_Load(sender As Object, e As EventArgs) Handles Me.Load
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
-        'Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_item_no,planned_production_qty,dat_start_date,dat_finish_date,int_line_no,txt_lot_no,txt_order_key,txt_local_so,int_span,txt_end_user,flt_working_hours,int_change_over_time,txt_grade,dat_new_explant,dat_etd,dat_rdd,dat_order_added From Esch_Na_tbl_orders " &
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_lot_no,txt_allocated_lots,dat_finish_date,int_line_no,flt_order_qty,planned_production_qty From Esch_Na_tbl_orders WHERE int_status_key Not In ('cancelled','invoiced')  ORDER BY int_line_no,dat_start_date", conn)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
+        'Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_item_no,planned_production_qty,dat_start_date,dat_finish_date,int_line_no,txt_lot_no,txt_order_key,txt_local_so,int_span,txt_end_user,flt_working_hours,int_change_over_time,txt_grade,dat_new_explant,dat_etd,dat_rdd,dat_order_added From Esch_Na_tbl_orders " &
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_lot_no,txt_allocated_lots,dat_finish_date,int_line_no,flt_order_qty,planned_production_qty From Esch_Na_tbl_orders WHERE int_status_key Not In ('cancelled','invoiced')  ORDER BY int_line_no,dat_start_date", conn)
 
         Dim _dtTable As DataTable = New DataTable()
 

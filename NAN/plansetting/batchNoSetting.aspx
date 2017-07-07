@@ -262,8 +262,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT [txt_line_group], [txt_currency1], [txt_minimum_no], [txt_current_no], [txt_last_no], [txt_maximum_no] FROM [tbl_line_group_and_batch_no]" 

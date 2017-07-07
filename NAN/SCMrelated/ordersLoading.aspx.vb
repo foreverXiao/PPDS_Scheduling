@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -332,9 +332,9 @@ Partial Class SCMrelated_ordersLoading
         End If
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT planned_production_qty,dat_start_date,dat_finish_date,int_line_no,flt_working_hours,int_change_over_time,txt_VIP,txt_gl_class From Esch_Na_tbl_orders " &
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT planned_production_qty,dat_start_date,dat_finish_date,int_line_no,flt_working_hours,int_change_over_time,txt_VIP,txt_gl_class From Esch_Na_tbl_orders " &
                                                                    " WHERE ((dat_start_date between " & dateSeparator & start & dateSeparator & " And " & dateSeparator & finish & dateSeparator & ") Or " &
                                                                    "(dat_finish_date between " & dateSeparator & start & dateSeparator & " And " & dateSeparator & finish & dateSeparator & ") Or (dat_start_date < " & dateSeparator & start & dateSeparator & " And dat_finish_date > " & dateSeparator & finish & dateSeparator & " )) And ( planned_production_qty > 0 ) And (flt_working_hours > 0) And (CAST(int_line_no as VARCHAR(5)) <> '" & valueOf("intDummyLine") & "')" &
                                                                     " ORDER BY int_line_no,dat_start_date", conn)
@@ -346,7 +346,7 @@ Partial Class SCMrelated_ordersLoading
         dtAdapter1.Fill(_dtTable)
 
 
-        'Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        'Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         'Dim hasException As Boolean = False
         ''finishTime_exPlantDate_Span1(connParam, _dtTable.Select(Nothing), hasException)
 

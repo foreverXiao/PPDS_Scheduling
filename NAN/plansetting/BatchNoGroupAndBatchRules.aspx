@@ -250,8 +250,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_batch_no_group_and_batch_rules] ORDER BY [int_Batch_NO_group]" 

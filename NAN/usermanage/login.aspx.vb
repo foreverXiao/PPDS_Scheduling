@@ -1,5 +1,4 @@
 ﻿Imports System.Data
-Imports System.Data.OleDb
 Imports System.Data.SqlClient
 Imports System.Configuration
 
@@ -20,13 +19,13 @@ Partial Class usermanage_login
 
         End If
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings("accessDB").ProviderName & ConfigurationManager.ConnectionStrings("accessDB").ConnectionString
+        Dim connstr As String = ConfigurationManager.ConnectionStrings("accessDB").ConnectionString
 
-        Dim connParam As OleDbConnection = New OleDbConnection(connstr)
         'Dim connParam As SqlConnection = New SqlConnection(connstr)
+        Dim connParam As SqlConnection = New SqlConnection(connstr)
 
-        Dim dtFrom As OleDbDataAdapter = New OleDbDataAdapter("Select user_name,rightlevel,password From  Esch_Na_tbl_userrole  ", connParam)
-
+        'Dim dtFrom As SqlDataAdapter = New SqlDataAdapter("Select user_name,rightlevel,password From  Esch_Na_tbl_userrole  ", connParam)
+        dim dtFrom as SqlDataAdapter = new SqlDataAdapter("Select user_name,rightlevel,password From  Esch_Na_tbl_userrole  ", connParam)
 
         Dim dtTable As New DataTable()
         dtFrom.Fill(dtTable)

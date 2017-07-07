@@ -1,5 +1,7 @@
 ﻿Imports basepage1
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
+
+
 
 Partial Class usermanage_changepassword
     Inherits basepage1
@@ -21,12 +23,12 @@ Partial Class usermanage_changepassword
     Protected Sub btSubmit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btSubmit.Click
         Dim db As String, connstr As String
         db = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
-        connstr = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & db
+        connstr = db
 
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         Dim i As Integer = 0
-        Dim cmd0 As OleDbCommand = New OleDbCommand()
-        Dim cmd As OleDbCommand = New OleDbCommand()
+        Dim cmd0 As SqlCommand = New SqlCommand()
+        Dim cmd As SqlCommand = New SqlCommand()
 
 
         Try

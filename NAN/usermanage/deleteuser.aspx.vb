@@ -1,6 +1,6 @@
 ﻿Imports basepage1
 Imports System.Data
-Imports System.Data.OleDb
+
 
 Partial Class usermanage_deleteuser
     Inherits basepage1
@@ -8,7 +8,7 @@ Partial Class usermanage_deleteuser
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
         'Dim sqldtsrcAccess123 As SqlDataSource = CType(Master.FindControl("CP1").FindControl("SDS1"), SqlDataSource)
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
 
 
 

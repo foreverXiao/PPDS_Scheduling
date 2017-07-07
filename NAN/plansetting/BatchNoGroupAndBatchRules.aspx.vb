@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -23,7 +23,7 @@ Partial Class plansetting_BatchNoGroupAndBatchRules
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
 
         maxRowNumber = 501
 

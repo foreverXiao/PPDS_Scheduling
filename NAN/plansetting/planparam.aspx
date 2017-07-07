@@ -200,19 +200,19 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\inetpub\wwwroot\test\App_Data\param.mdb;Persist Security Info=True" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=C:\inetpub\wwwroot\test\App_Data\param.mdb;Persist Security Info=True" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT [category], [paramname], [paramvalue] FROM [Esch_Na_tbl_plnprmtr] ORDER BY [category], [paramname] DESC" 
-    DeleteCommand="DELETE FROM [Esch_Na_tbl_plnprmtr] WHERE ([category] = ?) AND ([paramname] = ?)" 
+    DeleteCommand="DELETE FROM [Esch_Na_tbl_plnprmtr] WHERE ([category] = @original_category) AND ([paramname] = @original_paramname)" 
                                   
-            UpdateCommand="UPDATE [Esch_Na_tbl_plnprmtr] SET [paramvalue] = ? WHERE ([category] = ?) AND ([paramname] = ?) " 
+            UpdateCommand="UPDATE [Esch_Na_tbl_plnprmtr] SET [paramvalue] = @paramvalue WHERE ([category] = @original_category) AND ([paramname] = @original_paramname) " 
                                            
             
             
             
-            InsertCommand="INSERT INTO [Esch_Na_tbl_plnprmtr] ([category], [paramname], [paramvalue]) VALUES (?, ?, ?)" >
+            InsertCommand="INSERT INTO [Esch_Na_tbl_plnprmtr] ([category], [paramname], [paramvalue]) VALUES (@category, @paramname, @paramvalue)" >
   
         <DeleteParameters>
             <asp:Parameter Name="original_category" Type="String" />

@@ -1,6 +1,6 @@
 ﻿Imports basepage1
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Partial Class usermanage_addnewuser
     Inherits basepage1
 
@@ -53,48 +53,45 @@ Partial Class usermanage_addnewuser
 
         Dim db As String, connstr As String
         db = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
-        connstr = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & db
+        connstr = db
 
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
         conn.Open()
 
-        Dim i As Integer = 0
+        Dim stReturn As String = String.Empty
 
-        Dim cmd0 As OleDbCommand = New OleDbCommand()
-        Dim cmd As OleDbCommand = New OleDbCommand()
+        Dim cmd As SqlCommand = New SqlCommand()
 
         Try
-            cmd0.Connection = conn
-            cmd0.CommandText = "SELECT * FROM [Esch_Na_tbl_userrole] WHERE [user_name] = '" & tbUsNm.Text & "'"
+
 
 
             cmd.Connection = conn
-            cmd.CommandText = "INSERT INTO [Esch_Na_tbl_userrole]  ([user_name],[user_description],[password],[rightlevel]) VALUES('" & tbUsNm.Text & "','" & tbUsDscrptn.Text & "','" & tbNewpswrdAgn.Text & "'," & roleDDL1.SelectedValue & ")"
 
 
-
-
-            If Not cmd0.ExecuteReader().Read() Then
-                i = cmd.ExecuteNonQuery()
-            Else
-                msgPopUP("User's name: " & tbUsNm.Text & " already existed in the system.", lbStatus, True, False)
-
-            End If
+            cmd.Parameters.Add("@LoginName", SqlDbType.NVarChar).Value = tbUsNm.Text.Trim().ToLower()
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar).Value = tbNewpswrdAgn.Text.Trim()
+            cmd.Parameters.Add("@description", SqlDbType.NVarChar).Value = tbUsDscrptn.Text.Trim()
+            cmd.Parameters.Add("@authorityLevel", SqlDbType.Int).Value = Convert.ToInt32(roleDDL1.SelectedValue)
+            'cmd.CommandText = "SELECT COUNT(*) FROM B_UserInfo WHERE LoginName = @LoginName AND Password = @Password AND Approved = 'True'"
+            cmd.CommandText = "INSERT INTO [Esch_Na_tbl_userrole]  ([user_name],[user_description],[password],[rightlevel]) VALUES(@LoginName, @description, @Password, @authorityLevel)"
+            stReturn = cmd.ExecuteScalar()
+            cmd.CommandText = "SELECT [user_name] FROM [Esch_Na_tbl_userrole]  WHERE [user_name] = @LoginName "
+            stReturn = cmd.ExecuteScalar()
 
         Catch ex As Exception
 
         End Try
 
         cmd.Dispose()
-        cmd0.Dispose()
-
-
 
         conn.Dispose()
 
 
-        If i = 1 Then
+        If String.Compare(stReturn, tbUsNm.Text.Trim().ToLower()) Then
+            msgPopUP("User's name: " & tbUsNm.Text & " already existed in the system.", lbStatus, True, False)
+        Else
             msgPopUP("One new user " & tbUsNm.Text & " has been added in the system. ", lbStatus, False, False)
         End If
 
