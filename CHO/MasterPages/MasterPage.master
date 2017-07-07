@@ -1,0 +1,47 @@
+﻿<%@ Master Language="VB" CodeFile="MasterPage.master.vb" Inherits="MasterPages_MasterPage" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>SABIC IP eSchedule Tool</title>
+    <link id="Link1" runat="server" rel="shortcut icon" href="~/App_Themes/favicon.ico" type="image/x-icon" />
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+<div style=" background:#FFF" >
+	<table id ="logoTable" width="100%" border="0" align="center">
+  <tr>
+    <td><asp:Image ID="Image1" runat="server" ImageUrl="~/App_Themes/Monochrome/Images/logo.gif" /></td>
+    <td><asp:Image ID="Image2" runat="server" ImageUrl="~/App_Themes/Monochrome/Images/Fluidlines.gif" /></td>
+  </tr>
+</table> 
+	</div>
+<table id ="framework" width="100%" border="0" align="center">
+<tr><td align="left">
+
+    <form id="form1" runat="server">
+                <asp:Menu ID="Menu1" runat="server" DataSourceID="SiteMapDataSource1" 
+                Orientation="Horizontal" RenderingMode="Table" CssClass="MainMenu">
+                    <LevelMenuItemStyles>
+                        <asp:MenuItemStyle Font-Underline="False" />
+                    </LevelMenuItemStyles>
+                    <LevelSubMenuStyles>
+                        <asp:SubMenuStyle CssClass="subMenu" Font-Underline="False" />
+                    </LevelSubMenuStyles>
+                    <StaticMenuItemStyle BorderStyle="None" Width="100px" />
+            </asp:Menu>     
+            <asp:SiteMapDataSource ID="SiteMapDataSource1" runat="server" 
+                    ShowStartingNode="False" />
+                <asp:ScriptManager ID="SM1" runat="server">
+                </asp:ScriptManager>
+    <div >
+        <asp:ContentPlaceHolder id="CP1" runat="server" >
+        </asp:ContentPlaceHolder>
+    </div>
+
+    </form></td></tr>
+</table>
+</body>
+</html>
