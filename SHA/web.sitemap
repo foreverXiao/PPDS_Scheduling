@@ -1,1 +1,62 @@
-
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="~/Default.aspx" title="Navigation" description="Menu navigation">
+    <siteMapNode  title="Home" description="Go to the homepage" />
+    <siteMapNode  title="Interface" description="Interface with OPM">
+      <siteMapNode url="~/interface/downloadOrders.aspx" title="Download Orders" description="Download new orders or revision orders from OPM" />
+      <siteMapNode url="~/interface/downloadBatchstatus.aspx" title="Download batch status" description="Download batch status from OPM" />
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/interface/explantDateUpdate.aspx" title="Upload explant date" description="Generate ex-plant file and upload it to OPM ftp servers" />
+      <siteMapNode url="~/interface/batchCreationAndUpload.aspx" title="Create Batch and upload" description="Create batch No. and generate file and upload it to OPM" />
+    </siteMapNode>
+    <siteMapNode url="~/Makerelated/exception.aspx?i=2" title="Make related" description="Those operations involve Manufacturing rules">
+      <siteMapNode url="~/Makerelated/ScrewDieByItem.aspx" title="Screw&#38;Die by item" description="process data about screw and die by item" />
+      <siteMapNode url="~/Makerelated/ScrewDieFDAbyGrade.aspx" title="Screw,Die&#38;FDA by grade" description="process data about screw and die and FDA by grade" />
+      <siteMapNode url="~/Makerelated/similarGrade.aspx" title="Similar grade list" description="Show similar grades which could be combined production" />
+      <siteMapNode url="~/Makerelated/outputPerLineOnly.aspx" title="Default capacity per line" description="default prodution capacity per line " />
+      <siteMapNode url="~/Makerelated/outputPerLinePerGrade.aspx" title="Capacity per line&#38;grade" description="prodution capacity per line per grade" />
+      <siteMapNode url="~/Makerelated/outputPerLinePerItem.aspx" title="Capacity per line&#38;item" description="prodution capacity per line per item" />
+      <siteMapNode url="~/Makerelated/colorCode.aspx" title="Color code" description="the meaning of color code" />
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/Makerelated/exception.aspx" title="Exception report" description="Exception report" />
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/Makerelated/qualityConcern.aspx" title="Ackdate adjustment due to quality concern" description="extra days added on the original ex-plant date due to product quality control" />
+      <siteMapNode url="~/Makerelated/MOQ.aspx" title="MOQ" description="MOQ set by manufacturing" />
+      <siteMapNode url="~/Makerelated/assignlinebyqty.aspx" title="Line by order quantity" description="Assign production line no per order quantity" />
+     
+    </siteMapNode>
+    <siteMapNode url="~/SCMrelated/ordersForOF.aspx?i=2" title="SCM related" description="Those operations involve SCM rules">
+      <siteMapNode url="~/SCMrelated/MTIlist.aspx" title="MTI item List" description="MTI item list" />
+      <siteMapNode url="~/SCMrelated/transitTime.aspx" title="Transit time table" description="Setting transit time table" />
+      <siteMapNode url="~/SCMrelated/VIPleadtime.aspx" title="VIP lead time" description="VIP lead time table" />
+      <siteMapNode url="~/SCMrelated/currentLeadtime.aspx" title="current lead time" description="current lead time table" />
+      <siteMapNode url="~/SCMrelated/nearbyPOD.aspx" title="nearby POD list" description="PODs  are close enough for combining shipment" />
+      <siteMapNode url="~/SCMrelated/BLP.aspx" title="BLP" description="Bonded logistics park" />
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/SCMrelated/ordersForRM.aspx" title="order list for RM usage" description="order list to be used for calculation of RM usage" />
+      <siteMapNode url="~/SCMrelated/ordersForOF.aspx" title="order list for order fulfillment" description="order list to be used for order fulfillment team" />
+      <siteMapNode url="~/SCMrelated/ordersLoading.aspx" title="order loading" description="order loading by VIP and class and production line" /> 
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/SCMrelated/currencyCustoms.aspx" title="extra days on ackdate due to SCM or customs" description="Extra days to add on original ex-plant date by considering the factor of customs requirements or SCM related rules" />
+      <siteMapNode url="~/SCMrelated/addremark.aspx" title="Add remark" description="Add remark on order for production team's attention" />
+    </siteMapNode>
+    <siteMapNode url="~/dragDrop/OrderDetail.aspx?i=2" title="Operation board" description="Those operation related to order management">
+      <siteMapNode url="~/dragDrop/GanttChart.aspx" title="Gantt chart operation" description="Gantt chart schedule is used by planner" />
+      <siteMapNode url="~/dragDrop/OrderDetail.aspx" title="Order detail" description="Order detail">
+      </siteMapNode>
+    </siteMapNode>
+    <siteMapNode url="~/plansetting/systemparam.aspx?=2" title="Planning setting" description="Planning related setting">
+      <siteMapNode url="~/plansetting/BatchNoGroupAndBatchRules.aspx" title="Batch No grouping and setting rules" description="Some rules for Batch No. and setting can be seen in the table" />
+      <siteMapNode url="~/plansetting/PrdctnLinesAndBatchNoGroup.aspx" title="Grouping Lines And Batch No. Group" description="Grouping production lines based on the setting of Batch No. group" />
+      <siteMapNode title="--------------------" />
+      <siteMapNode url="~/plansetting/LinesAndOwners.aspx" title="Production lines and relevant planner" description="show all the production lines which are owned by specific planner" />
+      <siteMapNode url="~/plansetting/planparam.aspx" title="Role and timing in planning" description="Role and timing in planning" />
+      <siteMapNode url="~/plansetting/systemparam.aspx" title="System parameter table" description="Use to get or set system parameter to facilitate scheduling" />
+    </siteMapNode>
+    <siteMapNode url="~/usermanage/changepassword.aspx?i=2" title="User management" description="User management">
+    <siteMapNode url="~/usermanage/Login.aspx" title="Login  " description="Log in to this web site" />
+    <siteMapNode url="~/usermanage/changepassword.aspx" title="User and Password change" description="change password, add user or delete user" />
+	<siteMapNode url="~/usermanage/Logout.aspx" title="Logout" description="Log out this web site" />
+	</siteMapNode>
+  </siteMapNode>
+</siteMap>
