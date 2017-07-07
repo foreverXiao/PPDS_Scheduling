@@ -1,0 +1,131 @@
+﻿*
+{
+	font-family: Verdana, Arial, Sans-Serif;
+}
+
+body
+{
+	/* 
+		Clears white space around the body and assigns it BodyBackground.jpg as the background image.
+	  The image is not repeated, so the remaining background gets #464646 as its color.
+	*/
+	margin: 0;
+	/* background-image: url(Images/BodyBackground.jpg);
+	 background-repeat: no-repeat; */
+	background-color: #C0C0C0;
+}
+
+a
+{
+	/*
+		Clears the underline on normal links, and give them #da6637 as the color.
+	*/
+	color: #da6637;
+	text-decoration: none;
+}
+
+a:hover
+{
+	/*
+		Underlines links when the users hover the mouse over them.
+	*/
+	text-decoration: underline;
+}
+
+h1
+{
+  /*
+    Makes h1 elements smaller than their browser default.
+  */
+  font-size: 20px;
+}
+
+.Introduction
+{
+  font-style: italic;
+}
+
+#PageWrapper
+{
+	/*
+		Sets the total width for the entire page.
+	*/
+	width: 944px;
+}
+
+#Header
+{
+	/*
+		Gives the header the same width as the PageWrapper. The height creates some room for the logo.
+	*/
+	width: 944px;
+	height: 125px;
+}
+
+.HeaderLink
+{
+	/*
+		The #HeaderLink is nested in the #Header. It provides a link to the homepage,
+		and sets the header image background.
+		margin: auto puts the link (with a width of 278) right in the middle of #Header.
+	*/
+	background-image: url(Images/Header.gif);
+	background-repeat: no-repeat;
+	width: 278px; 
+	height: 131px; 
+	display: block;	
+	margin: auto;
+}
+
+#MenuWrapper
+{
+	/*
+		Floats the entire menu on the left of the content.
+	*/
+	width: 180px;
+	padding-top: 4px;
+	float: left;
+	padding: 10px;
+}
+
+#MainContent
+{
+	/*
+		Defines the main content area. The text color is white (on the gray background set on the body).
+		The #MainContent element has a minimum height of 500 pixels, but can grow if necessary.
+		The font-size is 80% of its parenty element, which in this case comes down to 80% of the font
+		the user has specified as the default font in the browser.
+	*/
+	color: white;
+	font-size: 0.8em;
+	width: 600px;
+	min-height: 500px;
+	padding: 10px;
+	padding-top: 0;
+	float: left;
+}
+
+#Sidebar
+{
+	/*
+		The SideBar is positioned absolutely in the top-right corner of the page (yet still within PageWrapper).
+		It has the same font-size and color as #MainContent
+	*/
+	font-size: 0.8em;
+	width: 124px;
+	color: White;
+	float: left;
+}
+
+#Footer
+{
+	/*
+		The footer is positioned below all other content (yet still within PageWrapper).
+		At the top, it gets a border with a dashed style, while all other sides have no border.
+	*/
+	text-align: center;
+	border-top: 2px dashed gray;
+	height: 37px;
+	clear: both;
+}
+
