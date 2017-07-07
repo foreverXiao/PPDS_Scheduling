@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -16,7 +16,7 @@ Partial Class dragDrop_normalOP_combineProduction
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         Message.Text = String.Empty
         StatusLabel.Text = String.Empty
 
@@ -171,15 +171,15 @@ Partial Class dragDrop_normalOP_combineProduction
 
 
         'delete all the records in the table
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
 
         Dim continueToUpdate As Boolean = True
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_similar_item_combination", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_similar_item_combination", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
 
@@ -231,15 +231,15 @@ Partial Class dragDrop_normalOP_combineProduction
 
 
 
-        Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_item_no,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_currency,dat_etd,dat_rdd,txt_remark,txt_grade,txt_color,txt_order_key,int_status_key FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString() & " ORDER BY txt_item_no ASC, dat_start_date ASC", conn)
+        Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_item_no,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_currency,dat_etd,dat_rdd,txt_remark,txt_grade,txt_color,txt_order_key,int_status_key FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString() & " ORDER BY txt_item_no ASC, dat_start_date ASC", conn)
         Dim dtTableFrom0 As DataTable = New DataTable()
         dtFrom0.Fill(dtTableFrom0)
         'how many records to be inserted into Esch_Na_tbl_similar_item_combination
         Dim recordsCount As Integer = 0
 
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
-        Dim dtFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_similar_grade_for_combination", connParam)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim dtFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_similar_grade_for_combination", connParam)
         Dim dtTableFrom1 As DataTable = New DataTable()
         dtFrom1.Fill(dtTableFrom1)
 
@@ -389,11 +389,11 @@ Partial Class dragDrop_normalOP_combineProduction
             errorMsg.Append("<div style='color:red;font-size:150%;'>" & userName & " is using the order detail table" & "</div>")
         End If
 
-        Dim conn As OleDbConnection = New OleDbConnection(SDS1.ConnectionString)
+        Dim conn As SqlConnection = New SqlConnection(SDS1.ConnectionString)
 
-        Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
-        'Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_remark,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_order_key,flt_working_hours,int_change_over_time,dat_new_explant,txt_item_no,txt_grade,int_span,dat_etd,txt_end_user FROM Esch_Na_tbl_orders ", conn)
-        Dim cmdbAccessCmdBuilder0 As New OleDbCommandBuilder(dtFrom0)
+        Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
+        'Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_remark,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_order_key,flt_working_hours,int_change_over_time,dat_new_explant,txt_item_no,txt_grade,int_span,dat_etd,txt_end_user FROM Esch_Na_tbl_orders ", conn)
+        Dim cmdbAccessCmdBuilder0 As New SqlCommandBuilder(dtFrom0)
         dtFrom0.UpdateCommand = cmdbAccessCmdBuilder0.GetUpdateCommand()
         Dim dtTableFrom0 As DataTable = New DataTable()
         dtFrom0.Fill(dtTableFrom0)
@@ -404,8 +404,8 @@ Partial Class dragDrop_normalOP_combineProduction
 
 
 
-        Dim dtAdapter As OleDbDataAdapter = New OleDbDataAdapter("SELECT planned_production_qty,int_line_no,txt_lot_no,dat_start_date,txt_remark,txt_order_key FROM Esch_Na_tbl_similar_item_combination", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter)
+        Dim dtAdapter As SqlDataAdapter = New SqlDataAdapter("SELECT planned_production_qty,int_line_no,txt_lot_no,dat_start_date,txt_remark,txt_order_key FROM Esch_Na_tbl_similar_item_combination", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter)
         dtAdapter.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         Dim dtTable As DataTable = New DataTable()
         dtAdapter.Fill(dtTable)
@@ -589,15 +589,15 @@ Partial Class dragDrop_normalOP_combineProduction
 
 
         'delete all the records in the table
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
 
         Dim continueToUpdate As Boolean = True
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_similar_item_combination", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_similar_item_combination", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
 
@@ -639,15 +639,15 @@ Partial Class dragDrop_normalOP_combineProduction
 
 
 
-        Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_item_no,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_currency,dat_etd,dat_rdd,txt_remark,txt_grade,txt_color,txt_order_key,int_status_key FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString(), conn)
+        Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_item_no,planned_production_qty,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,txt_currency,dat_etd,dat_rdd,txt_remark,txt_grade,txt_color,txt_order_key,int_status_key FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString(), conn)
         Dim dtTableFrom0 As DataTable = New DataTable()
         dtFrom0.Fill(dtTableFrom0)
         'how many records to be inserted into Esch_Na_tbl_similar_item_combination
         Dim recordsCount As Integer = 0
 
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
-        Dim dtFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_similar_grade_for_combination", connParam)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim dtFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_similar_grade_for_combination", connParam)
         Dim dtTableFrom1 As DataTable = New DataTable()
         dtFrom1.Fill(dtTableFrom1)
 

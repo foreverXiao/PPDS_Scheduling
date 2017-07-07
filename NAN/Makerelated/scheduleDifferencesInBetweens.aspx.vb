@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -16,7 +16,7 @@ Partial Class Makerelated_scheduleDifferencesInBetweens
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         
         maxRowNumber = 5001
 

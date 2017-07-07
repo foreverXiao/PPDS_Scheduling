@@ -1,4 +1,4 @@
-﻿Imports System.Data.OleDb
+﻿Imports System.Data.SqlClient
 
 Partial Class checkschedule_login
     Inherits System.Web.UI.Page
@@ -37,12 +37,12 @@ Partial Class checkschedule_login
 
         If username1.Text <> "" AndAlso password1.Text <> "" Then
 
-            connstr = ConfigurationManager.ConnectionStrings("accessDB").ProviderName & ConfigurationManager.ConnectionStrings("accessDB").ConnectionString
+            connstr = ConfigurationManager.ConnectionStrings("accessDB").ConnectionString
 
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
+            Dim conn As SqlConnection = New SqlConnection(connstr)
             conn.Open()
-            Dim command As New OleDbCommand("Select user_name,password,rightlevel From  Esch_Na_tbl_userrole ", conn)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand("Select user_name,password,rightlevel From  Esch_Na_tbl_userrole ", conn)
+            Dim reader As SqlDataReader
 
 
             Try

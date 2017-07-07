@@ -435,8 +435,8 @@
 
         <!---'Change command in SDS DataSource, datasource change to map path ---Gary Xu 20150108 --->
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source='~/App_Data\db_Resin.accdb'" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.ACE.OleDb.12.0;Data Source='~/App_Data\db_Resin.accdb'" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_MTI_add] ORDER BY [sequence]" 

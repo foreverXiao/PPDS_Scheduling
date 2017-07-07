@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -16,7 +16,7 @@ Partial Class Makerelated_outputPerLinePerGrade
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
 
 
         maxRowNumber = 15001
@@ -142,7 +142,7 @@ Partial Class Makerelated_outputPerLinePerGrade
     ''' 
     Protected Sub LV1_ItemUpdating(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.ListViewUpdateEventArgs) Handles LV1.ItemUpdating
 
-               Dim messageText As StringBuilder = New StringBuilder()
+        Dim messageText As StringBuilder = New StringBuilder()
 
         If String.IsNullOrEmpty(e.NewValues("int_rate")) Then
             messageText.Append("Empty value in field int_rate is not allowed.")
@@ -195,13 +195,13 @@ Partial Class Makerelated_outputPerLinePerGrade
     'generate a new table Esch_Na_tbl_assign_line_by_grade  which shows which production lines can produce specific grade
     Public Sub GradeAndItsQualifiedProductionLines()
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
 
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()

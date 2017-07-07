@@ -2,6 +2,7 @@
 Imports System.Configuration
 Imports System.Data
 Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports Microsoft.VisualBasic
 
 
@@ -29,14 +30,14 @@ Partial Class dragDrop_DataExchange
         
         If CacheFrom("schedule") Is Nothing Then 'need refresh data for planning period parameter
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
 
 
             'get the lastest data from table Esch_Na_tbl_plnprmtr to preset some planning parameter
 
-            Dim command1 As New OleDbCommand("Select paramname, paramvalue From Esch_Na_tbl_plnprmtr where category = 'schedule'", connParam)
-            Dim reader1 As OleDbDataReader
+            Dim command1 As New SqlCommand("Select paramname, paramvalue From Esch_Na_tbl_plnprmtr where category = 'schedule'", connParam)
+            Dim reader1 As SqlDataReader
             reader1 = command1.ExecuteReader()
             Do While reader1.Read()
                 temp.Add(reader1("paramname").ToString, reader1("paramvalue").ToString)
@@ -68,12 +69,12 @@ Partial Class dragDrop_DataExchange
 
 
         connstr = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         conn.Open()
 
         Dim dtTable As New DataTable
-        Dim command As New OleDbCommand(Nothing, conn)
-        Dim reader As OleDbDataReader
+        Dim command As New SqlCommand(Nothing, conn)
+        Dim reader As SqlDataReader
 
         'Considering special case in Nansha, its sorting is by dat_finish_date instead of dat_start_date like Shanghai and Chongqing
         Dim DAT_START_DATE As String = "dat_start_date", DAT_FINISH_DATE As String = "dat_finish_date", ShowRMBcurrency As Boolean = False
@@ -88,8 +89,8 @@ Partial Class dragDrop_DataExchange
             'adjust order one by one ======
             If actionRequested = "updateorder" Then
                 query1 = "Select * From Esch_Na_tbl_orders Where txt_order_key  ='" & Request.Params("orderkey") & "'"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
                 dtAdapter1.Fill(dtTable)
@@ -99,12 +100,12 @@ Partial Class dragDrop_DataExchange
                 dtTable.PrimaryKey = keys
 
                 Dim cRow As DataRow = dtTable.Rows(0)
-				'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-				Dim timedifference1 As Long
-				timedifference1 = DateDiff(DateInterval.Minute, cRow("dat_start_date"), cRow("dat_finish_date"))
+                'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                Dim timedifference1 As Long
+                timedifference1 = DateDiff(DateInterval.Minute, cRow("dat_start_date"), cRow("dat_finish_date"))
                 cRow("dat_start_date") = DateAdd(DateInterval.Minute, CLng(Request.Params("timepixels")) * 24 * 60 / pixelsPerDay, startD)
-				'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-				cRow("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow("dat_start_date"))
+                'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                cRow("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow("dat_start_date"))
 
 
                 Dim hasException As Boolean = False
@@ -134,8 +135,8 @@ Partial Class dragDrop_DataExchange
             If actionRequested = "changeline" Then
                 If autOp Then 'the user has the right to do planning on this production line
                     query1 = "Select * From Esch_Na_tbl_orders Where txt_order_key  ='" & Request.Params("orderkey") & "'"
-                    Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                    Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                    Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                    Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                     dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
                     dtAdapter1.Fill(dtTable)
@@ -177,8 +178,8 @@ Partial Class dragDrop_DataExchange
             'change start time for one order ======
             If actionRequested = "newStartTime" Then
                 query1 = "Select * From Esch_Na_tbl_orders Where txt_order_key  ='" & Request.Params("orderkey") & "'"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
                 dtAdapter1.Fill(dtTable)
@@ -188,19 +189,19 @@ Partial Class dragDrop_DataExchange
                 dtTable.PrimaryKey = keys
 
                 Dim cRow As DataRow = dtTable.Rows(0)
-				
-				'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-				Dim timedifference1 As Long
-				timedifference1 = DateDiff(DateInterval.Minute, cRow("dat_start_date"), cRow("dat_finish_date"))
-                				
-				
+
+                'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                Dim timedifference1 As Long
+                timedifference1 = DateDiff(DateInterval.Minute, cRow("dat_start_date"), cRow("dat_finish_date"))
+
+
                 If IsDate(Request.Params("newTime")) Then
                     cRow("dat_start_date") = CDate(Request.Params("newTime"))
                 End If
 
-				'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-				cRow("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow("dat_start_date"))
-				
+                'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                cRow("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow("dat_start_date"))
+
                 Dim hasException As Boolean = False
                 finishTime_exPlantDate_Span1(conn, dtTable.Select(Nothing), hasException)
                 If hasException Then
@@ -236,8 +237,8 @@ Partial Class dragDrop_DataExchange
                 reader.Close()
 
                 query1 = "Select * From Esch_Na_tbl_orders Where (" & DAT_START_DATE & " between " & dateSeparator & minDatetime & dateSeparator & " And " & dateSeparator & maxDatetime & dateSeparator & ") And ( int_line_no =  '" & Request.Params("lineno") & "' ) Order by " & DAT_START_DATE & " ASC," & DAT_FINISH_DATE & " ASC,txt_order_key ASC"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
                 dtAdapter1.Fill(dtTable)
@@ -295,8 +296,8 @@ Partial Class dragDrop_DataExchange
                 reader.Close()
 
                 query1 = "Select * From Esch_Na_tbl_orders Where (" & DAT_START_DATE & " between " & dateSeparator & minDatetime & dateSeparator & " And " & dateSeparator & maxDatetime & dateSeparator & ") And ( int_line_no =  '" & Request.Params("lineno") & "' ) Order by " & DAT_START_DATE & " DESC," & DAT_FINISH_DATE & " DESC,txt_order_key ASC"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
                 dtAdapter1.Fill(dtTable)
@@ -359,8 +360,8 @@ Partial Class dragDrop_DataExchange
                 reader.Close()
 
                 query1 = "Select * From Esch_Na_tbl_orders Where (dat_start_date between " & dateSeparator & minDatetimeSt & dateSeparator & " And " & dateSeparator & maxDatetime & dateSeparator & ")  And  ( int_line_no =  '" & Request.Params("lineno") & "')  Order by dat_start_date ASC,dat_finish_date ASC,txt_order_key ASC"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
 
@@ -374,15 +375,15 @@ Partial Class dragDrop_DataExchange
                 Dim i As Long = dtTable.Rows.Count, j As Long
                 Dim timedifference1 As Long = DateDiff(DateInterval.Minute, minDatetimeSt, DateAdd(DateInterval.Minute, CLng(Request.Params("areaoffsetleft")) * 24 * 60 / pixelsPerDay, startD))
 
-				
+
                 For j = 0 To i - 1  ' i should be greater or equal to 2 because two elements were selected in the previous step
                     cRow0 = dtTable.Rows(j)
                     If cRow0("txt_order_key") = Request.Params("frstslctnID") Then continue1 = True
                     If continue1 Then
-					
+
                         'cRow0("dat_start_date") = DateAdd(DateInterval.Minute, timedifference1, cRow0("dat_start_date"))
-						'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-						cRow0("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow0("dat_finish_date"))
+                        'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                        cRow0("dat_finish_date") = DateAdd(DateInterval.Minute, timedifference1, cRow0("dat_finish_date"))
                     End If
                     If cRow0("txt_order_key") = Request.Params("scndslctnID") Then
                         Exit For
@@ -418,8 +419,8 @@ Partial Class dragDrop_DataExchange
             'add or delete screw pull mark======
             If actionRequested = "pullscrew" Then
                 query1 = "select * From Esch_Na_tbl_prductn_prmtr where  txt_order_key = '" & Request.Params("orderkey") & "'"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
                 dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
@@ -457,8 +458,8 @@ Partial Class dragDrop_DataExchange
             If actionRequested = "cleanscrew" Then
 
                 query1 = "select * From Esch_Na_tbl_prductn_prmtr where  txt_order_key = '" & Request.Params("orderkey") & "'"
-                Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
-                Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(query1, conn)
+                Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                 dtAdapter1.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
                 dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 

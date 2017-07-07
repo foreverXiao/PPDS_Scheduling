@@ -1,11 +1,12 @@
 ﻿Imports System
 Imports System.Configuration
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports Microsoft.VisualBasic
 Imports System.Runtime.InteropServices
 Imports System.Diagnostics
 Imports System.IO
+Imports System.Data.OleDb
 
 
 
@@ -45,14 +46,14 @@ Partial Class checkschedule_DtExchgChecker
 
         If CacheFrom("checker") Is Nothing Then 'need refresh data for planning period parameter
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
 
 
             'get the lastest data from table Esch_Na_tbl_plnprmtr to preset some planning parameter
 
-            Dim command1 As New OleDbCommand("Select paramname, paramvalue From Esch_Na_tbl_plnprmtr where category = 'checker'", connParam)
-            Dim reader1 As OleDbDataReader
+            Dim command1 As New SqlCommand("Select paramname, paramvalue From Esch_Na_tbl_plnprmtr where category = 'checker'", connParam)
+            Dim reader1 As SqlDataReader
             reader1 = command1.ExecuteReader()
             Do While reader1.Read()
                 temp.Add(reader1("paramname").ToString, reader1("paramvalue").ToString)
@@ -123,14 +124,14 @@ Partial Class checkschedule_DtExchgChecker
 
         'generate excel file as the database to show gantt chart
         If actionRequested = "generateExcelFile" Then
-            connstr = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
+            connstr = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+            Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
             query1 = "Select table1.txt_order_key,int_line_no,dat_start_date,dat_finish_date,txt_lot_no,int_span,planned_production_qty,flt_unallocate_qty,flt_order_qty,txt_color,txt_item_no,dat_etd,txt_VIP,txt_process_technics,txt_FDA,txt_remark,txt_payment_status,table2.txt_pull_screw From  " & _
              " ((Select txt_order_key,int_line_no,dat_start_date,dat_finish_date,txt_lot_no,int_span,planned_production_qty,flt_unallocate_qty,flt_order_qty,txt_color,txt_item_no,dat_etd,txt_VIP,txt_process_technics,txt_FDA,txt_remark,txt_payment_status From Esch_Na_tbl_orders  Where CAST(int_line_no AS VARCHAR(5)) <> '" & valueOf("intDummyLine") & "' And  ((dat_start_date  between " & dateSeparator & startD & dateSeparator & " And " & dateSeparator & DateAdd("d", daysFromStart, startD) & dateSeparator & ") Or (dat_finish_date  between " & dateSeparator & startD & dateSeparator & " And " & dateSeparator & DateAdd("d", daysFromStart, startD) & dateSeparator & "))) as table1 Left Join (select txt_order_key,txt_pull_screw From Esch_Na_tbl_prductn_prmtr) as table2 On (table1.txt_order_key = table2.txt_order_key)) Order by int_line_no, " & DAT_START_DATE & "  ASC, " & DAT_FINISH_DATE & " ASC"
 
-            Dim dtUpdateFrom As OleDbDataAdapter = New OleDbDataAdapter(query1, conn)
+            Dim dtUpdateFrom As SqlDataAdapter = New SqlDataAdapter(query1, conn)
             Dim dtFromTable As New DataTable()
             dtUpdateFrom.Fill(dtFromTable)
 
@@ -155,10 +156,10 @@ Partial Class checkschedule_DtExchgChecker
             End If
 
             If File.Exists(filePath & excelDatabaseFile & ".xlsx") Then
-                excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePath & excelDatabaseFile & ".xlsx")
+                excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePath & excelDatabaseFile & ".xlsx")
             Else
                 If File.Exists(filePath & excelDatabaseFile & ".xls") Then
-                    excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filePath & excelDatabaseFile & ".xls")
+                    excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filePath & excelDatabaseFile & ".xls")
                 Else
                     actionRequested = "orderlines1"
                     continueOrNot = False

@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -18,12 +18,12 @@ Partial Class dragDrop_ganttColor
 
         Dim cssSTR As StringBuilder = New StringBuilder()
 
-        Using connCSS As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Using connCSS As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
 
             connCSS.Open()
 
-            Dim command As New OleDbCommand("SELECT * FROM [Esch_Na_tbl_colorCode] ", connCSS)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand("SELECT * FROM [Esch_Na_tbl_colorCode] ", connCSS)
+            Dim reader As SqlDataReader
             reader = command.ExecuteReader()
 
             Do While reader.Read()

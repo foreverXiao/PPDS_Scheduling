@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -18,7 +18,7 @@ Partial Class Makerelated_colorCode
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
 
 
         maxRowNumber = 15001
@@ -241,12 +241,12 @@ Partial Class Makerelated_colorCode
 
         Dim cssSTR As StringBuilder = New StringBuilder()
 
-        Using connCSS As OleDbConnection = New OleDbConnection(SDS1.ConnectionString)
+        Using connCSS As SqlConnection = New SqlConnection(SDS1.ConnectionString)
 
             connCSS.Open()
 
-            Dim command As New OleDbCommand(SDS1.SelectCommand.ToString(), connCSS)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand(SDS1.SelectCommand.ToString(), connCSS)
+            Dim reader As SqlDataReader
             reader = command.ExecuteReader()
 
             Do While reader.Read()

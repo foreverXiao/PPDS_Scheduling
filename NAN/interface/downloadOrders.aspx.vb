@@ -1,5 +1,5 @@
 ﻿Imports System.IO
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 Imports orderRelatedPlanning
 
@@ -186,13 +186,13 @@ Partial Class interface_downloadOrders
 
 
         Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = db
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
         conn.Open()
 
-        Dim command As New OleDbCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImportOrderMapping > 0 ORDER BY intImportOrderMapping", conn)
-        Dim reader As OleDbDataReader = command.ExecuteReader()
+        Dim command As New SqlCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImportOrderMapping > 0 ORDER BY intImportOrderMapping", conn)
+        Dim reader As SqlDataReader = command.ExecuteReader()
         Dim mapping1() As String = {String.Empty}, icount As Integer = 0
         While reader.Read()
             ReDim Preserve mapping1(icount)
@@ -234,9 +234,9 @@ Partial Class interface_downloadOrders
 
 
 
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT " & String.Join(" , ", mapping1) & " , txt_order_key , txt_grade , txt_color " & " FROM " & tablename, conn)
-        'Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM " & tablename, conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT " & String.Join(" , ", mapping1) & " , txt_order_key , txt_grade , txt_color " & " FROM " & tablename, conn)
+        'Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM " & tablename, conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
@@ -335,10 +335,10 @@ Partial Class interface_downloadOrders
 
         If localpath.EndsWith("\") Then localpath = localpath.Substring(0, localpath.Length - 1)
 
-        Dim strCSVConnString As String = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & localpath & ";" & "Extended Properties='text;HDR=NO;'"
+        Dim strCSVConnString As String = "Provider=Microsoft.Jet.OleDb.4.0;Data Source=" & localpath & ";" & "Extended Properties='text;HDR=NO;'"
 
         ' load the data from text to DataTable 
-        Using oleda As OleDbDataAdapter = New OleDbDataAdapter(strSql, strCSVConnString)
+        Using oleda As SqlDataAdapter = New SqlDataAdapter(strSql, strCSVConnString)
 
             Try
 
@@ -393,8 +393,8 @@ Partial Class interface_downloadOrders
 
             Dim showExceptionReport As Boolean = False
 
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Using conn As OleDbConnection = New OleDbConnection(connstr)
+            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+            Using conn As SqlConnection = New SqlConnection(connstr)
                 conn.Open()
 
                 NewRevisionOrderDataToMainOrderTable(conn, errMessage)

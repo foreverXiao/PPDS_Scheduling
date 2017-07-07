@@ -88,8 +88,8 @@
         </footertemplate>
       </asp:repeater><br />  
         <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=E:\IIS\Test\App_Data\db_Resin.mdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=E:\IIS\Test\App_Data\db_Resin.mdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_BatchNO] ORDER BY int_line_no ASC,dat_start_date ASC,dat_finish_date,txt_item_no,txt_currency ASC,txt_package_code,txt_order_key ASC" >

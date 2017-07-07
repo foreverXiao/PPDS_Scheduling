@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -15,7 +15,7 @@ Partial Class dragDrop_normalOP_MTI
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         
         maxRowNumber = 5001
 
@@ -261,16 +261,16 @@ Partial Class dragDrop_normalOP_MTI
 
         Dim userName As String = lockKeyTable(priority.addMTI)
         If String.IsNullOrEmpty(userName) Then
-            Dim conn As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString)
-            Dim dtUpdateTo0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = ''", conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo0)
+            Dim conn As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString)
+            Dim dtUpdateTo0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = ''", conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo0)
             dtUpdateTo0.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
             Dim dtTbl0 As DataTable = New DataTable()
             dtUpdateTo0.Fill(dtTbl0)
 
 
-            Dim dtUpdateTo1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_MTI_add WHERE decideToAdd = 1 ", conn)
-            Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtUpdateTo1)
+            Dim dtUpdateTo1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_MTI_add WHERE decideToAdd = 1 ", conn)
+            Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtUpdateTo1)
             dtUpdateTo1.UpdateCommand = cmdbAccessCmdBuilder1.GetUpdateCommand()
             Dim dtTbl1 As DataTable = New DataTable()
             dtUpdateTo1.Fill(dtTbl1)

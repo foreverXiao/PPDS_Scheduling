@@ -203,14 +203,14 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.Jet.OleDb.4.0;Data Source=C:\IIS\Test\App_Data\param.mdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
-    SelectCommand="SELECT [minimum], [maximum], [txt_line_no] FROM [Esch_Na_Esch_Na_tbl_assign_line_by_order_qty] ORDER BY [minimum], [maximum]" 
-    DeleteCommand="DELETE FROM [Esch_Na_Esch_Na_tbl_assign_line_by_order_qty] WHERE (([minimum] = ?)) AND (([maximum] = ?))" 
+    SelectCommand="SELECT [minimum], [maximum], [txt_line_no] FROM [Esch_Na_tbl_assign_line_by_order_qty] ORDER BY [minimum], [maximum]" 
+    DeleteCommand="DELETE FROM [Esch_Na_tbl_assign_line_by_order_qty] WHERE (([minimum] = ?)) AND (([maximum] = ?))" 
                                   
-            UpdateCommand="UPDATE [Esch_Na_Esch_Na_tbl_assign_line_by_order_qty] SET [txt_line_no] = ? WHERE (([minimum] = ?)) AND (([maximum] = ?))" 
+            UpdateCommand="UPDATE [Esch_Na_tbl_assign_line_by_order_qty] SET [txt_line_no] = ? WHERE (([minimum] = ?)) AND (([maximum] = ?))" 
                                                            
                     
             

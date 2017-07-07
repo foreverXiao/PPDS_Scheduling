@@ -266,8 +266,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\inetpub\wwwroot\NAN\App_Data\param.accdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.ACE.OleDb.12.0;Data Source=C:\inetpub\wwwroot\NAN\App_Data\param.accdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     SelectCommand="SELECT * FROM [Esch_Na_tbl_qualityConcern] ORDER BY [groupName], [seqPerGroup]" 

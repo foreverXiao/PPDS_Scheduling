@@ -1,5 +1,5 @@
 ﻿Imports System.IO
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 Imports System.Globalization
 Imports System.Threading
@@ -143,13 +143,13 @@ Partial Class interface_downloadBatchstatus
         'Dim mapping1() As String = {"txt_lot_no", "txt_batch_status", "txt_actual_line_no", "dat_actual_start", "dat_actual_finish", "flt_actual_qty"}
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
         conn.Open()
 
-        Dim command As New OleDbCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImpBatchstatusMapping > 0 ORDER BY intImpBatchstatusMapping", conn)
-        Dim reader As OleDbDataReader = command.ExecuteReader()
+        Dim command As New SqlCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImpBatchstatusMapping > 0 ORDER BY intImpBatchstatusMapping", conn)
+        Dim reader As SqlDataReader = command.ExecuteReader()
         Dim mapping1() As String = {String.Empty}, icount As Integer = 0
         Dim btchstsTable As String = "Esch_Na_tbl_BatchSts_from_OPM"
         While reader.Read()
@@ -175,14 +175,14 @@ Partial Class interface_downloadBatchstatus
 
 
     'import data from txt file to specific table in access database
-    Private Function dataFromTxtToTable(ByVal localfile As String, ByVal tablename As String, ByVal mapping() As String, ByRef conn As OleDbConnection, Optional ByVal separator As String = "@") As String
+    Private Function dataFromTxtToTable(ByVal localfile As String, ByVal tablename As String, ByVal mapping() As String, ByRef conn As SqlConnection, Optional ByVal separator As String = "@") As String
         'dataFromTxtToTable = String.Empty
 
         Dim msg As StringBuilder = New StringBuilder()
 
         'open the table
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT " & String.Join(" , ", mapping) & " FROM " & tablename, conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT " & String.Join(" , ", mapping) & " FROM " & tablename, conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
 
@@ -257,12 +257,12 @@ Partial Class interface_downloadBatchstatus
         Dim msgNormal As StringBuilder = New StringBuilder()
 
         'get the meaning for each number of batch status
-        Dim connstr1 As String = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
-        Dim connParam As OleDbConnection = New OleDbConnection(connstr1)
+        Dim connstr1 As String = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        Dim connParam As SqlConnection = New SqlConnection(connstr1)
 
         Dim batchMeaning As New Dictionary(Of String, String)
-        Dim command As OleDbCommand = New OleDbCommand("SELECT [txt_batch_status],[txt_meaning]  FROM  [Esch_Na_tbl_batch_status_meaning] ", connParam)
-        Dim reader As OleDbDataReader
+        Dim command As SqlCommand = New SqlCommand("SELECT [txt_batch_status],[txt_meaning]  FROM  [Esch_Na_tbl_batch_status_meaning] ", connParam)
+        Dim reader As SqlDataReader
 
         Try
             connParam.Open()
@@ -279,13 +279,13 @@ Partial Class interface_downloadBatchstatus
         End Try
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
-        Dim dtUpdateFrom As OleDbDataAdapter = New OleDbDataAdapter("Select * From Esch_Na_tbl_BatchSts_from_OPM ", conn)
+        Dim dtUpdateFrom As SqlDataAdapter = New SqlDataAdapter("Select * From Esch_Na_tbl_BatchSts_from_OPM ", conn)
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_lot_no,txt_batch_status,txt_actual_line_no,dat_actual_start,dat_actual_finish,flt_actual_qty FROM  Esch_Na_tbl_orders  WHERE (txt_lot_no Is Not Null) And ( int_status_key <> 'cancelled' )   ORDER BY  txt_lot_no ASC ", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_lot_no,txt_batch_status,txt_actual_line_no,dat_actual_start,dat_actual_finish,flt_actual_qty FROM  Esch_Na_tbl_orders  WHERE (txt_lot_no Is Not Null) And ( int_status_key <> 'cancelled' )   ORDER BY  txt_lot_no ASC ", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -356,16 +356,16 @@ Partial Class interface_downloadBatchstatus
             Dim now1 As DateTime = DateTime.Now()
 
             Dim connstrSQL As String = ConfigurationManager.ConnectionStrings("eColor").ProviderName & ConfigurationManager.ConnectionStrings("eColor").ConnectionString
-            Dim connSQL As OleDbConnection = New OleDbConnection(connstrSQL)
+            Dim connSQL As SqlConnection = New SqlConnection(connstrSQL)
             'date format is a little different when using SQL clause to connect to SQL server database
             'advance start time by 5 days to get enough batch information from SQL server in case that some batches were running through 5 days
-            Dim dtUpdateFrom As OleDbDataAdapter = New OleDbDataAdapter("Select On_Line_Data1.Lot_No AS actualLotNo, min([Time]) AS earliestStart,min([Line]) AS actualLine From ((SELECT Lot_No,Time FROM On_Line_Data WHERE (Lot_No Is Not Null)  And Time >'" & startPoint.AddDays(-14) & "') AS On_Line_Data1 Left Join Col_Cor_Hdr On Col_Cor_Hdr.Lot_No = On_Line_Data1.Lot_No ) WHERE ([Line] Is Not Null) Group by On_Line_Data1.Lot_No", connSQL)
+            Dim dtUpdateFrom As SqlDataAdapter = New SqlDataAdapter("Select On_Line_Data1.Lot_No AS actualLotNo, min([Time]) AS earliestStart,min([Line]) AS actualLine From ((SELECT Lot_No,Time FROM On_Line_Data WHERE (Lot_No Is Not Null)  And Time >'" & startPoint.AddDays(-14) & "') AS On_Line_Data1 Left Join Col_Cor_Hdr On Col_Cor_Hdr.Lot_No = On_Line_Data1.Lot_No ) WHERE ([Line] Is Not Null) Group by On_Line_Data1.Lot_No", connSQL)
 
             Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,planned_production_qty,dat_start_from_qa,flt_actual_completed,flt_actual_qty_man FROM Esch_Na_tbl_orders WHERE  ( txt_lot_no Is Not Null )  And ( int_status_key <> 'cancelled' ) And ( (dat_start_date between " & dateSeparator & startPoint & dateSeparator & " And " & dateSeparator & now1.AddDays(3) & dateSeparator & ")  Or (dat_finish_date  between " & dateSeparator & startPoint & dateSeparator & " And " & dateSeparator & now1.AddDays(3) & dateSeparator & ") )  ORDER BY txt_lot_no ASC,dat_start_date ASC", conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim connstr As String = db
+            Dim conn As SqlConnection = New SqlConnection(connstr)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,txt_lot_no,dat_start_date,dat_finish_date,planned_production_qty,dat_start_from_qa,flt_actual_completed,flt_actual_qty_man FROM Esch_Na_tbl_orders WHERE  ( txt_lot_no Is Not Null )  And ( int_status_key <> 'cancelled' ) And ( (dat_start_date between " & dateSeparator & startPoint & dateSeparator & " And " & dateSeparator & now1.AddDays(3) & dateSeparator & ")  Or (dat_finish_date  between " & dateSeparator & startPoint & dateSeparator & " And " & dateSeparator & now1.AddDays(3) & dateSeparator & ") )  ORDER BY txt_lot_no ASC,dat_start_date ASC", conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
             dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
             Dim dsAccess As DataSet = New DataSet
@@ -427,7 +427,7 @@ Partial Class interface_downloadBatchstatus
 
                         If DateDiff(DateInterval.Minute, CDate(a.Item("dat_start_date")), now1) > 0 Then
                             If DateDiff(DateInterval.Minute, CDate(a.Item("dat_finish_date")), now1) > 0 Then   'dat_start_date  dat_finish_date now1
-                                a.Item("flt_actual_completed") = 100                               
+                                a.Item("flt_actual_completed") = 100
                             Else   'dat_start_date  now1 dat_finish_date 
                                 a.Item("flt_actual_completed") = CInt(100 * DateDiff(DateInterval.Minute, CDate(a.Item("dat_start_date")), now1) / DateDiff(DateInterval.Minute, CDate(a.Item("dat_start_date")), CDate(a.Item("dat_finish_date"))))
                             End If

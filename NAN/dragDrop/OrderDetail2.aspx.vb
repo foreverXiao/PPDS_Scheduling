@@ -1,10 +1,11 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
+Imports System.Data.OleDb
 
 
 
@@ -17,7 +18,7 @@ Partial Class dragDrop_OrderDetail
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
 
         SDS1.ConnectionString = connstr
 
@@ -213,9 +214,9 @@ Partial Class dragDrop_OrderDetail
         Dim keyname00 As String = LV1.DataKeyNames(0)
 
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
         Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
@@ -226,7 +227,7 @@ Partial Class dragDrop_OrderDetail
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -244,7 +245,7 @@ Partial Class dragDrop_OrderDetail
         Dim excelslctsql As String = SDS1.SelectCommand
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
         Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
-        'Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter("Select * From [" & frstSheetName & "A1:BT15001] ", connexcl)
+        'Dim dtADPexcel As SqlDataAdapter = New SqlDataAdapter("Select * From [" & frstSheetName & "A1:BT15001] ", connexcl)
         Dim dataDS1 As DataSet = New DataSet
 
         Try
@@ -259,19 +260,19 @@ Partial Class dragDrop_OrderDetail
 
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
 
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         conn.Open()
 
         Dim selectSQL As String = SDS1.SelectCommand
 
 
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(selectSQL, conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(selectSQL, conn)
 
 
         'use aunto command generation mechnism to generate standard insert SQL clause
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
 
@@ -395,19 +396,19 @@ Partial Class dragDrop_OrderDetail
         Dim keyname00 As String = LV1.DataKeyNames(0)
 
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -421,7 +422,7 @@ Partial Class dragDrop_OrderDetail
 
         Dim excelslctsql As String = SDS1.SelectCommand.ToString
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
-        Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
+        Dim dtADPexcel As OledbDataAdapter = New OledbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
         Dim dataDS1 As DataSet = New DataSet
         Try
             dtADPexcel.Fill(dataDS1, "update")
@@ -440,8 +441,8 @@ Partial Class dragDrop_OrderDetail
         End If
         'connexcl = Nothing
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
         Dim selectSQL As String = SDS1.SelectCommand
@@ -451,11 +452,11 @@ Partial Class dragDrop_OrderDetail
             selectSQL &= " WHERE CAST(int_line_no as VARCHAR(5)) In (" & lineListOwnedByUser() & ")"
         End If
 
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(selectSQL, conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(selectSQL, conn)
 
 
-        dtAdapter1.DeleteCommand = New OleDbCommand(SDS1.DeleteCommand, conn)
-        Dim paramenter1 As OleDbParameter = dtAdapter1.DeleteCommand.Parameters.Add("@txt_order_key", OleDbType.VarChar, 22)
+        dtAdapter1.DeleteCommand = New SqlCommand(SDS1.DeleteCommand, conn)
+        Dim paramenter1 As SqlParameter = dtAdapter1.DeleteCommand.Parameters.Add("@original_txt_order_key", SqlDbType.VarChar, 22)
         paramenter1.SourceColumn = keyname00
         paramenter1.SourceVersion = DataRowVersion.Original
 
@@ -564,12 +565,12 @@ Partial Class dragDrop_OrderDetail
         Dim keyname00 As String = LV1.DataKeyNames(0)
 
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
@@ -577,7 +578,7 @@ Partial Class dragDrop_OrderDetail
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -593,7 +594,7 @@ Partial Class dragDrop_OrderDetail
 
         Dim excelslctsql As String = SDS1.SelectCommand.ToString
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
-        Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
+        Dim dtADPexcel As OledbDataAdapter = New OledbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
         Dim dataDS1 As DataSet = New DataSet
         Try
             dtADPexcel.Fill(dataDS1, "update")
@@ -658,16 +659,16 @@ Partial Class dragDrop_OrderDetail
 
         If continue1 Then
 
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
+            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+            Dim conn As SqlConnection = New SqlConnection(connstr)
             conn.Open()
 
-            Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
+            Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
 
 
 
-            dtAdapter1.DeleteCommand = New OleDbCommand(SDS1.DeleteCommand, conn)
-            Dim paramenter1 As OleDbParameter = dtAdapter1.DeleteCommand.Parameters.Add("@txt_order_key", OleDbType.VarChar, 22)
+            dtAdapter1.DeleteCommand = New SqlCommand(SDS1.DeleteCommand, conn)
+            Dim paramenter1 As SqlParameter = dtAdapter1.DeleteCommand.Parameters.Add("@original_txt_order_key", SqlDbType.VarChar, 22)
             paramenter1.SourceColumn = keyname00
             paramenter1.SourceVersion = DataRowVersion.Original
 
@@ -737,12 +738,12 @@ Partial Class dragDrop_OrderDetail
         Dim excelconnectionstr As String
         Dim keyname00 As String = LV1.DataKeyNames(0)
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
@@ -750,7 +751,7 @@ Partial Class dragDrop_OrderDetail
 
         'Try
         '     Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -766,19 +767,19 @@ Partial Class dragDrop_OrderDetail
 
         Dim excelslctsql As String = SDS1.SelectCommand.ToString
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
-        Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
+        Dim dtADPexcel As OledbDataAdapter = New OledbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
         Dim dataDS1 As DataSet = New DataSet
 
 
 
         Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = db
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         conn.Open()
 
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand, conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand, conn)
 
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
         If continue1 Then
@@ -824,10 +825,10 @@ Partial Class dragDrop_OrderDetail
 
                 'considering additional days to add on original ex-plant date
                 msgRtrn.AppendLine(additionDaysOnExplantDate(conn, dataDS1.Tables("tobeupdated")))
-				
-				'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
-				msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
-				msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
+
+                'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
+                msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
+                msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
 
                 'dtAdapter1.UpdateBatchSize = 512
                 dtAdapter1.Update(dataDS1, "tobeupdated")
@@ -892,12 +893,12 @@ Partial Class dragDrop_OrderDetail
         Dim keyname00 As String = LV1.DataKeyNames(0)
 
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Using connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Using connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
 
             'connexcl.Open()
 
@@ -906,7 +907,7 @@ Partial Class dragDrop_OrderDetail
 
             'Try
             '    ' Get the name of the first worksheet:
-            '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+            '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
             '    frstSheetName = dbSchema.Rows(0)("TABLE_NAME").ToString()
 
@@ -975,15 +976,15 @@ Partial Class dragDrop_OrderDetail
 
                     If continue1 Then
 
-                        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-                        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+                        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+                        Dim conn As SqlConnection = New SqlConnection(connstr)
                         conn.Open()
 
-                        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
+                        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders ", conn)
 
 
-                        dtAdapter1.DeleteCommand = New OleDbCommand(SDS1.DeleteCommand, conn)
-                        Dim paramenter1 As OleDbParameter = dtAdapter1.DeleteCommand.Parameters.Add("@txt_order_key", OleDbType.VarChar, 22)
+                        dtAdapter1.DeleteCommand = New SqlCommand(SDS1.DeleteCommand, conn)
+                        Dim paramenter1 As SqlParameter = dtAdapter1.DeleteCommand.Parameters.Add("@original_txt_order_key", SqlDbType.VarChar, 22)
                         paramenter1.SourceColumn = keyname00
                         paramenter1.SourceVersion = DataRowVersion.Original
 
@@ -1052,12 +1053,12 @@ Partial Class dragDrop_OrderDetail
         Dim excelconnectionstr As String
         Dim keyname00 As String = LV1.DataKeyNames(0)
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Using connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Using connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
             connexcl.Open()
 
             Dim frstSheetName As String = "Sheet1$"
@@ -1072,13 +1073,13 @@ Partial Class dragDrop_OrderDetail
 
 
                     Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-                    Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
-                    Dim conn As OleDbConnection = New OleDbConnection(connstr)
+                    Dim connstr As String = db
+                    Dim conn As SqlConnection = New SqlConnection(connstr)
                     conn.Open()
 
-                    Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand, conn)
+                    Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand, conn)
 
-                    Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+                    Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
                     dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
                     If continue1 Then
@@ -1124,9 +1125,9 @@ Partial Class dragDrop_OrderDetail
                             'considering additional days to add on original ex-plant date
                             msgRtrn.AppendLine(additionDaysOnExplantDate(conn, dataDS1.Tables("tobeupdated")))
 
-							'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
-							msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
-							msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
+                            'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
+                            msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
+                            msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
                             'dtAdapter1.UpdateBatchSize = 512
                             dtAdapter1.Update(dataDS1, "tobeupdated")
                             msgRtrn.AppendLine("Action of insertion upon excel file is completed. The number of inserted records is " & howManyRecordsInserted)
@@ -1187,12 +1188,12 @@ Partial Class dragDrop_OrderDetail
         Dim keyname00 As String = LV1.DataKeyNames(0)
 
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
@@ -1200,7 +1201,7 @@ Partial Class dragDrop_OrderDetail
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -1215,8 +1216,8 @@ Partial Class dragDrop_OrderDetail
 
         Dim excelslctsql As String = SDS1.SelectCommand.ToString
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
-        Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
-        'Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "] ", connexcl)
+        Dim dtADPexcel As OledbDataAdapter = New OledbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] WHERE (" & keyname00 & " Is Not Null)", connexcl)
+        'Dim dtADPexcel As OledbDataAdapter = New OledbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "] ", connexcl)
         Dim dataDS1 As DataSet = New DataSet
         Try
             dtADPexcel.Fill(dataDS1, "update")
@@ -1243,13 +1244,13 @@ Partial Class dragDrop_OrderDetail
 
 
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         conn.Open()
 
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand, conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand, conn)
 
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
         If continue1 Then
@@ -1327,9 +1328,9 @@ Partial Class dragDrop_OrderDetail
                 'msgRtrn.AppendLine(calculateRSD1(conn, changedRows))
                 msgRtrn.AppendLine(finishTime_exPlantDate_Span1(conn, changedRows, hasException))
 
-				'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
-				msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
-				msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
+                'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
+                msgRtrn.AppendLine(PackageOrMiscellaneous(conn))
+                msgRtrn.AppendLine(DoAssignScrewDieAndFDA())
                 'howManyRecordsInserted = changedRows.Count
                 howManyRecordsInserted = dataDS1.Tables("tobeupdated").Select(Nothing, Nothing, System.Data.DataViewRowState.Added).Count
 
@@ -1534,12 +1535,12 @@ Partial Class dragDrop_OrderDetail
 
         Dim msgRtrn As New StringBuilder
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         'applying some planning rules after importing data to database
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
 
         Try
 
@@ -1551,7 +1552,7 @@ Partial Class dragDrop_OrderDetail
             '1,RSD ========================
             If True Then
 
-                Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_item_no,dat_rdd,dat_etd,txt_currency,txt_destination,txt_ship_method,txt_end_user FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
+                Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_item_no,dat_rdd,dat_etd,txt_currency,txt_destination,txt_ship_method,txt_end_user FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
 
                 Dim dtTable As DataTable = New DataTable
 
@@ -1582,7 +1583,7 @@ Partial Class dragDrop_OrderDetail
             '2,UpdateOrderCompletionPercentage1 ========================
             If True Then
 
-                Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,flt_actual_qty_man,flt_actual_completed,planned_production_qty FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
+                Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,flt_actual_qty_man,flt_actual_completed,planned_production_qty FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
 
                 Dim dtTable As DataTable = New DataTable
 
@@ -1614,7 +1615,7 @@ Partial Class dragDrop_OrderDetail
             '3,finishTime_exPlantDate_Span1 ========================
             If True Then
 
-                Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
+                Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = '" & e.OldValues("txt_order_no") & "-" & e.OldValues("txt_order_line_no") & "'", conn)
 
                 Dim dtTable As DataTable = New DataTable
 
@@ -1644,12 +1645,12 @@ Partial Class dragDrop_OrderDetail
                 e.NewValues("flt_working_hours") = r(0).Item("flt_working_hours")
                 e.NewValues("int_change_over_time") = r(0).Item("int_change_over_time")
                 'e.NewValues("dat_finish_date") = r(0).Item("dat_finish_date")
-				'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
-				e.NewValues("dat_start_date") = r(0).Item("dat_start_date")
+                'FANAR+ GO-LIVE, on Nov.9.2016  need calculate start time based on finished time, backward calculation
+                e.NewValues("dat_start_date") = r(0).Item("dat_start_date")
                 e.NewValues("dat_new_explant") = r(0).Item("dat_new_explant")
                 e.NewValues("int_span") = r(0).Item("int_span")
 
-  
+
                 dtTable.Dispose()
                 dtUpdateTo.Dispose()
 
@@ -1719,8 +1720,8 @@ Partial Class dragDrop_OrderDetail
     Protected Function deleteSome(Optional ByVal condition As String = " true ") As String
         Dim orderLines As Integer
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         orderLines = deleteUponCondition(conn, condition)
 
         conn.Dispose()

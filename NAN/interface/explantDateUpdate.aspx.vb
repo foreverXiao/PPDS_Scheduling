@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -49,8 +49,8 @@ Partial Class interface_explantDateUpdate
         Dim errAndNormalMessage As StringBuilder = New StringBuilder()
 
         'delete all the records in the table
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
         Dim continueToUpdate As Boolean = True
 
@@ -60,8 +60,8 @@ Partial Class interface_explantDateUpdate
             errAndNormalMessage.Append("<div style='color:red;font-size:150%;'>" & userName & " is using the order detail table" & "</div>")
         End If
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_explant", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_explant", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
 
@@ -87,8 +87,8 @@ Partial Class interface_explantDateUpdate
         Dim sqlWhereClause As StringBuilder = New StringBuilder(" WHERE (txt_order_type = 'MTO') And (int_status_key <> 'invoiced') And (int_status_key <> 'cancelled') And (dat_new_explant >= " & dateSeparator & CDate(txtStartPoint.Text) & dateSeparator & ") And (CAST(int_line_no as VARCHAR(5)) <> '" & valueOf("intDummyLine") & "')")
 
 
-        Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_orgn_code,int_status_key,int_line_no,txt_order_key,dat_etd,dat_new_explant FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString(), conn)
-        Dim cmdbAccessCmdBuilder0 As New OleDbCommandBuilder(dtFrom0)
+        Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT txt_orgn_code,int_status_key,int_line_no,txt_order_key,dat_etd,dat_new_explant FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString(), conn)
+        Dim cmdbAccessCmdBuilder0 As New SqlCommandBuilder(dtFrom0)
         dtFrom0.UpdateCommand = cmdbAccessCmdBuilder0.GetUpdateCommand()
 
         Dim dtTableFrom0 As DataTable = New DataTable()
@@ -113,8 +113,8 @@ Partial Class interface_explantDateUpdate
 
 
         'connect to explant history table
-        Dim dtFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_Esch_Na_tbl_explant_history ", conn)
-        Dim cmdbCmdBuilder As New OleDbCommandBuilder(dtFrom1)
+        Dim dtFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_Esch_Na_tbl_explant_history ", conn)
+        Dim cmdbCmdBuilder As New SqlCommandBuilder(dtFrom1)
         dtFrom1.InsertCommand = cmdbCmdBuilder.GetInsertCommand()
         dtFrom1.UpdateCommand = cmdbCmdBuilder.GetUpdateCommand()
         dtFrom1.DeleteCommand = cmdbCmdBuilder.GetDeleteCommand()

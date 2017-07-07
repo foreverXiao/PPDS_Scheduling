@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Configuration
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports Microsoft.VisualBasic
 Imports basepage1
 

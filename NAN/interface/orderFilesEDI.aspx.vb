@@ -1,6 +1,6 @@
 ﻿Imports basepage1
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.IO
 imports System.Collections.Generic
 

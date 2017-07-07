@@ -1,7 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Data
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports Microsoft.VisualBasic
 Imports System.Linq
@@ -17,7 +17,7 @@ Partial Class interface_batchCreationAndUpload
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
 
-        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        SDS1.ConnectionString = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         Message.Text = String.Empty
         StatusLabel.Text = String.Empty
 
@@ -144,9 +144,9 @@ Partial Class interface_batchCreationAndUpload
         Dim msgRtrn As New StringBuilder()
 
         'get data from table Esch_Na_tbl_batch_no_group_and_batch_rules
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
-        Dim dtAdapterParam As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
-        Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtAdapterParam)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim dtAdapterParam As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
+        Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtAdapterParam)
         dtAdapterParam.UpdateCommand = cmdbAccessCmdBuilder1.GetUpdateCommand()
         Dim dtTableParam As DataTable = New DataTable
         dtAdapterParam.Fill(dtTableParam)
@@ -158,9 +158,9 @@ Partial Class interface_batchCreationAndUpload
 
 
         'get data from table Esch_Na_tbl_BatchNO
-        Dim conn As OleDbConnection = New OleDbConnection(SDS1.ConnectionString)
-        Dim dtAdapter As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO ", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter)
+        Dim conn As SqlConnection = New SqlConnection(SDS1.ConnectionString)
+        Dim dtAdapter As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO ", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter)
         dtAdapter.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         Dim dtTable As DataTable = New DataTable()
         dtAdapter.Fill(dtTable)
@@ -356,14 +356,14 @@ Partial Class interface_batchCreationAndUpload
         End If
 
         'delete all the records in the table
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
 
 
         Dim continueToUpdate As Boolean = True
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
 
@@ -391,7 +391,7 @@ Partial Class interface_batchCreationAndUpload
             sqlWhereClause.Append("  And (" & ddlColumn.SelectedValue & " Between " & dateSeparator & CDate(earlierTime.Text).AddHours(ddlHour1.SelectedIndex).AddMinutes(ddlMinute1.SelectedIndex) & dateSeparator & " and " & dateSeparator & CDate(laterTime.Text).AddHours(ddlHour2.SelectedIndex).AddMinutes(ddlMinute2.SelectedIndex) & dateSeparator & ") ")
         End If
 
-        Dim dtFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString() & " ORDER BY int_line_no,txt_item_no,dat_start_date ", conn)
+        Dim dtFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders " & sqlWhereClause.ToString() & " ORDER BY int_line_no,txt_item_no,dat_start_date ", conn)
         Dim dtTableFrom0 As DataTable = New DataTable()
         dtFrom0.Fill(dtTableFrom0)
         'how many records to be inserted into Esch_Na_tbl_BatchNO
@@ -399,13 +399,13 @@ Partial Class interface_batchCreationAndUpload
 
 
         'connect to another database to get information about Batch No. group 
-        connstr = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
-        Dim connParam As OleDbConnection = New OleDbConnection(connstr)
+        connstr = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+        Dim connParam As SqlConnection = New SqlConnection(connstr)
 
         'Add BLP logic here =======================================================================
         'add logic for BLP orders which are considered for export but destination is within the same country, then we can use non-fumigated pallet for these BLP export order 
         'use customer information and POD to identify which order could be applied on this rule ========================================
-        Dim dtBLP As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_BLP_new ", connParam)
+        Dim dtBLP As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_BLP_new ", connParam)
         Dim dtTableBLP As DataTable = New DataTable()
         dtBLP.Fill(dtTableBLP)
 
@@ -449,13 +449,13 @@ Partial Class interface_batchCreationAndUpload
 
 
         'in order to get line description
-        Dim dtFrom2 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_LinesAndOwners ", connParam)
+        Dim dtFrom2 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_LinesAndOwners ", connParam)
         Dim dtTableFrom2 As DataTable = New DataTable()
         dtFrom2.Fill(dtTableFrom2)
 
 
-        Dim dtAdapterParam As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
-        Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtAdapterParam)
+        Dim dtAdapterParam As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
+        Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtAdapterParam)
         dtAdapterParam.UpdateCommand = cmdbAccessCmdBuilder1.GetUpdateCommand()
         Dim dtTableParam As DataTable = New DataTable
         dtAdapterParam.Fill(dtTableParam)
@@ -553,7 +553,7 @@ Partial Class interface_batchCreationAndUpload
 
 
         'update batch no group based on the conditions set in table Esch_Na_tbl_production_lines_and_batch_no_group
-        Dim dtFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_production_lines_and_batch_no_group", connParam)
+        Dim dtFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_production_lines_and_batch_no_group", connParam)
         Dim dtTableFrom1 As DataTable = New DataTable()
         dtFrom1.Fill(dtTableFrom1)
         Dim listOfBtachNoConditions As New List(Of String)
@@ -677,24 +677,24 @@ Partial Class interface_batchCreationAndUpload
         'Dim errMessage As StringBuilder = New StringBuilder()
 
         'get data from table Esch_Na_tbl_batch_no_group_and_batch_rules
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
-        Dim dtAdapterParam As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
-        Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtAdapterParam)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim dtAdapterParam As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_batch_no_group_and_batch_rules", connParam)
+        Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtAdapterParam)
         dtAdapterParam.UpdateCommand = cmdbAccessCmdBuilder1.GetUpdateCommand()
         Dim dtTableParam As DataTable = New DataTable
         dtAdapterParam.Fill(dtTableParam)
 
         'get data from table Esch_Na_tbl_MTI_List 
-        Dim dtAdapterMTIlist As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_MTI_List WHERE dat_expiration_date >= " & dateSeparator & Today & dateSeparator & " AND dat_effective_date <= " & dateSeparator & Today & dateSeparator, connParam)
+        Dim dtAdapterMTIlist As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_MTI_List WHERE dat_expiration_date >= " & dateSeparator & Today & dateSeparator & " AND dat_effective_date <= " & dateSeparator & Today & dateSeparator, connParam)
         Dim dtTableMTIlist As DataTable = New DataTable
         dtAdapterMTIlist.Fill(dtTableMTIlist)
 
 
 
         'get data from table Esch_Na_tbl_BatchNO
-        Dim conn As OleDbConnection = New OleDbConnection(SDS1.ConnectionString)
-        Dim dtAdapter As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter)
+        Dim conn As SqlConnection = New SqlConnection(SDS1.ConnectionString)
+        Dim dtAdapter As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_BatchNO", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter)
         dtAdapter.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         Dim dtTable As DataTable = New DataTable()
         dtAdapter.Fill(dtTable)
@@ -874,8 +874,8 @@ Partial Class interface_batchCreationAndUpload
 
             If returnMessageAfterFTPoperation = "true" Then
 
-                Dim dtAdapterOrders As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_lot_no,int_formula_version FROM Esch_Na_tbl_orders", conn)
-                Dim cmdCmdBuilder As New OleDbCommandBuilder(dtAdapterOrders)
+                Dim dtAdapterOrders As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_lot_no,int_formula_version FROM Esch_Na_tbl_orders", conn)
+                Dim cmdCmdBuilder As New SqlCommandBuilder(dtAdapterOrders)
                 dtAdapterOrders.UpdateCommand = cmdCmdBuilder.GetUpdateCommand()
                 Dim dtTableOrders As DataTable = New DataTable()
                 dtAdapterOrders.Fill(dtTableOrders)
@@ -975,9 +975,9 @@ Partial Class interface_batchCreationAndUpload
     End Sub
 
     Protected Sub cbAllOrders_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cbAllOrders.CheckedChanged
-        Dim conn As OleDbConnection = New OleDbConnection(SDS1.ConnectionString)
-        Dim dtAdapter As OleDbDataAdapter = New OleDbDataAdapter("SELECT bnl_Y_or_N,txt_lot_no,txt_order_key FROM Esch_Na_tbl_BatchNO", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter)
+        Dim conn As SqlConnection = New SqlConnection(SDS1.ConnectionString)
+        Dim dtAdapter As SqlDataAdapter = New SqlDataAdapter("SELECT bnl_Y_or_N,txt_lot_no,txt_order_key FROM Esch_Na_tbl_BatchNO", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter)
         dtAdapter.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         Dim dtTable As DataTable = New DataTable()
         dtAdapter.Fill(dtTable)
@@ -1042,13 +1042,13 @@ Partial Class interface_batchCreationAndUpload
     ''' <remarks></remarks>
     Protected Sub updateLineItemSequenceTable()
         'get data from table Esch_Na_tbl_batch_no_group_and_batch_rules
-        Dim conn As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString)
-        Dim dtAdapterFrom As OleDbDataAdapter = New OleDbDataAdapter("SELECT COUNT(bnl_Y_or_N) AS countNum,txt_item_no,int_line_no FROM Esch_Na_tbl_BatchNO WHERE bnl_Y_or_N > 0 GROUP BY txt_item_no,int_line_no ", conn)
+        Dim conn As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString)
+        Dim dtAdapterFrom As SqlDataAdapter = New SqlDataAdapter("SELECT COUNT(bnl_Y_or_N) AS countNum,txt_item_no,int_line_no FROM Esch_Na_tbl_BatchNO WHERE bnl_Y_or_N > 0 GROUP BY txt_item_no,int_line_no ", conn)
         Dim dtTableFrom As DataTable = New DataTable
         dtAdapterFrom.Fill(dtTableFrom)
 
-        Dim dtAdapterTo1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_historical_data ", conn)
-        Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtAdapterTo1)
+        Dim dtAdapterTo1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_historical_data ", conn)
+        Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtAdapterTo1)
         dtAdapterTo1.UpdateCommand = cmdbAccessCmdBuilder1.GetUpdateCommand()
         dtAdapterTo1.InsertCommand = cmdbAccessCmdBuilder1.GetInsertCommand()
         Dim dtTableTo1 As DataTable = New DataTable
@@ -1059,8 +1059,8 @@ Partial Class interface_batchCreationAndUpload
         dtTableTo1.PrimaryKey = keys
 
 
-        Dim dtAdapterTo2 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_Priority_Sequence ", conn)
-        Dim cmdbAccessCmdBuilder2 As New OleDbCommandBuilder(dtAdapterTo2)
+        Dim dtAdapterTo2 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_Priority_Sequence ", conn)
+        Dim cmdbAccessCmdBuilder2 As New SqlCommandBuilder(dtAdapterTo2)
         dtAdapterTo2.UpdateCommand = cmdbAccessCmdBuilder2.GetUpdateCommand()
         dtAdapterTo2.InsertCommand = cmdbAccessCmdBuilder2.GetInsertCommand()
         Dim dtTableTo2 As DataTable = New DataTable

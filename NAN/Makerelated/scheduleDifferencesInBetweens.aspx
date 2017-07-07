@@ -296,8 +296,8 @@
           </SelectedItemTemplate>
             </asp:ListView>
     <asp:SqlDataSource ID="SDS1" runat="server" 
-        ConnectionString="Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\inetpub\wwwroot\test\App_Data\db_Resin.accdb" 
-        ProviderName="System.Data.OleDb"
+        ConnectionString="Provider=Microsoft.ACE.OleDb.12.0;Data Source=C:\inetpub\wwwroot\test\App_Data\db_Resin.accdb" 
+        ProviderName="System.Data.SqlClient"
         OldValuesParameterFormatString="original_{0}"
         
     
