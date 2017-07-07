@@ -1,0 +1,115 @@
+﻿
+*
+{
+	font-family: Arial, Sans-Serif;
+}
+
+body
+{
+	/* 
+		Clears white space around the body except for the top which gets 10 pixels.
+	*/
+	margin: 2px 0 0 0;
+	background-color:inherit;
+}
+
+a
+{
+	/*
+		Clears the underline on normal links, and give them #308462 as the color.
+	*/
+	color: #308462;
+	text-decoration: none;
+}
+
+a:hover
+{
+	/*
+		Underlines links when the users hover the mouse over them.
+	*/
+	text-decoration: underline;
+}
+
+h1
+{
+  /*
+    Makes h1 elements smaller than their browser default.
+  */
+ font-size : 20px;
+}
+
+.Introduction
+{
+  font-style: italic;
+  color: #003399;
+}
+
+
+
+.HeaderLink
+{
+	/*
+		The #HeaderLink is nested in the #Header. It provides a link to the homepage.
+	*/
+	width: 844px; 
+	height: 86px; 
+	display: block;	
+}
+
+.MainMenu
+{
+	/*
+		The Menu gets a white border on all four sides.
+	*/
+	border: 1px solid white;
+	margin: 1px 0px;
+	width: 814px;
+	height: 19px;
+	background-color : #cccccc;
+}
+
+.subMenu
+{
+	/*
+		The Menu gets a white border on all four sides.
+	*/
+	font-size: 0.8em;
+	border: 1px solid #cccccc;
+}
+
+
+
+.MyButton
+{
+	color: #308462;
+}
+
+#Download1
+{   
+    position:relative;
+    left:350px;
+    width:auto;
+}
+
+#Label1
+{
+    position:relative;
+    left:360px;
+    width:auto;
+}
+
+div
+{
+    font-size:small;
+    border:0px solid purple;
+    background-color:silver;
+    margin:0px 0px 0px 0px;
+    width:auto;
+    text-indent:0px;
+    white-space:nowrap;
+}
+
+Input[disabled] 
+{
+color:#aaaaaa;
+}
