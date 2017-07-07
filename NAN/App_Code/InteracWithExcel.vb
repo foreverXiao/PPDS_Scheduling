@@ -1,5 +1,4 @@
 ﻿Imports Microsoft.VisualBasic
-Imports System.Data.OleDb
 Imports System.Data
 Imports System.IO
 Imports System.Text
@@ -8,7 +7,8 @@ Imports System.Linq
 Imports System.Runtime.InteropServices
 Imports System.Diagnostics
 Imports System.Data.Odbc.OdbcConnection
-Imports System.Data.OleDb.OleDbConnection
+Imports System.Data.OleDb
+Imports System.Data.SqlClient
 
 
 Partial Public Class InteracWithExcel
@@ -163,7 +163,7 @@ Partial Public Class InteracWithExcel
             For i As Integer = 1 To rCount
                 rw = dtTable.Rows(i - 1)
                 For j As Integer = 0 To cCount - 1
-                    dataArray(i, j) = rw.Item(j)                
+                    dataArray(i, j) = rw.Item(j)
                 Next
             Next
 
@@ -480,9 +480,9 @@ Partial Public Class InteracWithExcel
         'Dim warningMessage As StringBuilder = New StringBuilder()
         Dim excelconnectionstr As String
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
         Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
@@ -493,7 +493,7 @@ Partial Public Class InteracWithExcel
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -540,12 +540,12 @@ Partial Public Class InteracWithExcel
 
 
         Dim connstr As String = SDS1.ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'conn.Open()
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand.ToString(), conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand.ToString(), conn)
 
 
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         'dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
@@ -744,9 +744,9 @@ Partial Public Class InteracWithExcel
         'Dim warningMessage As StringBuilder = New StringBuilder()
         Dim excelconnectionstr As String
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
         Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
@@ -757,7 +757,7 @@ Partial Public Class InteracWithExcel
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -804,12 +804,12 @@ Partial Public Class InteracWithExcel
 
 
         Dim connstr As String = SDS1.ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'conn.Open()
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand.ToString(), conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand.ToString(), conn)
 
 
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         'dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
@@ -924,19 +924,19 @@ Partial Public Class InteracWithExcel
 
         Dim excelconnectionstr As String
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -952,7 +952,7 @@ Partial Public Class InteracWithExcel
         Dim excelslctsql As String = SDS1.SelectCommand.ToString
         excelslctsql = excelslctsql.Substring(0, excelslctsql.IndexOf(" FROM "))
         Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter(excelslctsql & " FROM [" & frstSheetName & "A1:" & rightmostColumn() & maxRowNumber.ToString() & "] ", connexcl)
-        'Dim dtADPexcel As OleDbDataAdapter = New OleDbDataAdapter("Select * From [" & frstSheetName & "A1:BT15001] ", connexcl)
+        'Dim dtADPexcel As SqlDataAdapter = New SqlDataAdapter("Select * From [" & frstSheetName & "A1:BT15001] ", connexcl)
         Dim dataDS1 As DataSet = New DataSet
         Try
             dtADPexcel.Fill(dataDS1, "update")
@@ -966,14 +966,14 @@ Partial Public Class InteracWithExcel
         'Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
         'Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
         Dim connstr As String = SDS1.ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'conn.Open()
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand.ToString(), conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand.ToString(), conn)
 
 
 
         'use aunto command generation mechnism to generate standard insert SQL clause
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
 
@@ -1115,12 +1115,12 @@ Partial Public Class InteracWithExcel
 
         Dim excelconnectionstr As String
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
@@ -1128,7 +1128,7 @@ Partial Public Class InteracWithExcel
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -1155,13 +1155,13 @@ Partial Public Class InteracWithExcel
 
 
         Dim connstr As String = SDS1.ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'conn.Open()
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand.ToString(), conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand.ToString(), conn)
         'Dim keyname00 As String = LV1.DataKeyNames(0)  'primary key
 
         'use aunto command generation mechnism to generate standard insert SQL clause
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand
 
 
@@ -1347,12 +1347,12 @@ Partial Public Class InteracWithExcel
 
         Dim excelconnectionstr As String
         If flextsn = ".xls" Then
-            excelconnectionstr = String.Format("provider=Microsoft.Jet.OLEDB.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.Jet.OleDb.4.0; Data Source='{0}';" & "Extended Properties='Excel 8.0;HDR=YES;IMEX=1'", filepath & filename)
         Else
-            excelconnectionstr = String.Format("provider=Microsoft.ACE.OLEDB.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
+            excelconnectionstr = String.Format("provider=Microsoft.ACE.OleDb.12.0; Data Source='{0}';" & "Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filepath & filename)
         End If
 
-        Dim connexcl As New System.Data.OleDb.OleDbConnection(excelconnectionstr)
+        Dim connexcl As New System.Data.Oledb.OledbConnection(excelconnectionstr)
         connexcl.Open()
 
         Dim frstSheetName As String = "Sheet1$"
@@ -1360,7 +1360,7 @@ Partial Public Class InteracWithExcel
 
         'Try
         '    ' Get the name of the first worksheet:
-        '    Dim dbSchema As DataTable = connexcl.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, Nothing)
+        '    Dim dbSchema As DataTable = connexcl.GetSqlSchemaTable(SqlSchemaGuid.Tables, Nothing)
 
         '    If (dbSchema Is Nothing OrElse dbSchema.Rows.Count < 1) Then
         '    End If
@@ -1402,13 +1402,13 @@ Partial Public Class InteracWithExcel
 
 
         Dim connstr As String = SDS1.ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'conn.Open()
-        Dim dtAdapter1 As OleDbDataAdapter = New OleDbDataAdapter(SDS1.SelectCommand.ToString(), conn)
+        Dim dtAdapter1 As SqlDataAdapter = New SqlDataAdapter(SDS1.SelectCommand.ToString(), conn)
 
 
         'use aunto command generation mechnism to generate standard insert SQL clause
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtAdapter1)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtAdapter1)
         dtAdapter1.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand
 
 
@@ -1558,9 +1558,9 @@ Partial Public Class InteracWithExcel
     ''' </summary>
     Protected Function getColumnNameOf_Esch_Na_tbl_orders() As String
 
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = 'Null'", conn)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE txt_order_key = 'Null'", conn)
         Dim dtTable As DataTable = New DataTable()
         dtUpdateFrom0.Fill(dtTable)
         Dim columnNames As StringBuilder = New StringBuilder(",")

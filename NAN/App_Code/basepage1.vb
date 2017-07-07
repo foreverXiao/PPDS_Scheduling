@@ -1,5 +1,5 @@
 ﻿Imports Microsoft.VisualBasic
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 Imports System.IO
 
@@ -101,12 +101,12 @@ Partial Public Class basepage1
     Public Sub initiateProductionLines()
 
         If CacheFrom("arrayOfLines") Is Nothing Then
-
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
 
-            Dim command As New OleDbCommand("Select distinct int_line_no From Esch_Na_tbl_output_by_line_only ORDER BY int_line_no ASC", connParam)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand("Select distinct int_line_no From Esch_Na_tbl_output_by_line_only ORDER BY int_line_no ASC", connParam)
+
+            Dim reader As SqlDataReader
 
             reader = command.ExecuteReader()
 
@@ -192,11 +192,13 @@ Partial Public Class basepage1
 
         If CacheFrom("systemvariable") Is Nothing Then
 
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
+            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString
 
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
-            Dim command As OleDbCommand = New OleDbCommand("SELECT txtVariableValue , txtVariableName  FROM  [Esch_Na_tbl_system_variable]", conn)
-            Dim reader As OleDbDataReader
+            Dim conn As SqlConnection = New SqlConnection(connstr)
+            Dim command As SqlCommand = New SqlCommand("SELECT txtVariableValue , txtVariableName  FROM  [Esch_Na_tbl_system_variable]", conn)
+            Dim reader As SqlDataReader
+
+
             Dim cacheDictionary As New Dictionary(Of String, String)
 
             Try

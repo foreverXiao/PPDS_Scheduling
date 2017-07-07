@@ -1,5 +1,5 @@
 ﻿Imports Microsoft.VisualBasic
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 Imports System.IO
 
@@ -10,13 +10,13 @@ Partial Public Class FrequentPlanActions
     ' Esch_Na_Esch_Na_tbl_orders_new_revision_from_OPM ===> Esch_Na_tbl_orders
     Public Shared ReadOnly workingDaysOfWeek() As Integer = {0, 1, 1, 1, 1, 1, 0}
 
-    Public Function Planned_production_qty(ByRef conn As OleDbConnection) As String
+    Public Function Planned_production_qty(ByRef conn As SqlConnection) As String
 
         Dim msgRtrn As New StringBuilder
 
         'planned production quantity will not change if the start time is within 16 hours
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,flt_unallocate_qty,planned_production_qty,int_line_no FROM Esch_Na_tbl_orders WHERE ((dat_start_date > " & dateSeparator & DateTime.Now().AddHours(2) & dateSeparator & ") AND ( planned_production_qty <> flt_unallocate_qty) And (int_status_key Not In ('invoiced','cancelled'))) Or (planned_production_qty Is Null)", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,flt_unallocate_qty,planned_production_qty,int_line_no FROM Esch_Na_tbl_orders WHERE ((dat_start_date > " & dateSeparator & DateTime.Now().AddHours(2) & dateSeparator & ") AND ( planned_production_qty <> flt_unallocate_qty) And (int_status_key Not In ('invoiced','cancelled'))) Or (planned_production_qty Is Null)", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -63,13 +63,13 @@ Partial Public Class FrequentPlanActions
     ''' <param name="conn"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Function assignValueToBlankPrice(ByRef conn As OleDbConnection) As String
+    Public Function assignValueToBlankPrice(ByRef conn As SqlConnection) As String
 
         Dim msgRtrn As New StringBuilder
 
         'planned production quantity will not change if the start time is within 16 hours
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,flt_sales_price FROM Esch_Na_tbl_orders WHERE (flt_sales_price Is Null)", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,flt_sales_price FROM Esch_Na_tbl_orders WHERE (flt_sales_price Is Null)", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -109,8 +109,8 @@ Partial Public Class FrequentPlanActions
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Overloads Function DoCalculateRSD() As String
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         Dim msg As String = calculateRSD(conn, " (dat_start_date > " & dateSeparator & Today & dateSeparator & ") ")
         conn.Dispose()
 
@@ -123,8 +123,8 @@ Partial Public Class FrequentPlanActions
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Overloads Function DoCalculateRSD(ByVal extrCondition As String) As String
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         Dim msg As String = calculateRSD(conn, " (dat_start_date > " & dateSeparator & Today & dateSeparator & ") " & extrCondition)
         conn.Dispose()
 
@@ -135,14 +135,14 @@ Partial Public Class FrequentPlanActions
     '''<summary>
     ''' calculate RSD for each revised  or new orders (also consider special order type like apple order certification time)
     ''' </summary>
-    Public Function calculateRSD(ByRef conn As OleDbConnection, Optional ByVal filterCondition As String = " (int_status_key Not In ('invoiced','cancelled','old')) ") As String
+    Public Function calculateRSD(ByRef conn As SqlConnection, Optional ByVal filterCondition As String = " (int_status_key Not In ('invoiced','cancelled','old')) ") As String
 
         Dim msgRtrn As New StringBuilder
 
         Try
 
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_item_no,dat_rdd,dat_etd,txt_currency,txt_destination,txt_ship_method,txt_end_user FROM Esch_Na_tbl_orders WHERE " & filterCondition, conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_item_no,dat_rdd,dat_etd,txt_currency,txt_destination,txt_ship_method,txt_end_user FROM Esch_Na_tbl_orders WHERE " & filterCondition, conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
             Dim dtTable As DataTable = New DataTable
@@ -177,16 +177,16 @@ Partial Public Class FrequentPlanActions
     '''<summary>
     ''' calculate RSD for each revised  or new orders (also consider special order type like apple order certification time)
     ''' </summary>
-    Public Function calculateRSD1(ByRef conn As OleDbConnection, ByRef dtRows() As DataRow) As String
+    Public Function calculateRSD1(ByRef conn As SqlConnection, ByRef dtRows() As DataRow) As String
 
         Dim msgRtrn As New StringBuilder
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
         Try
 
-            Dim dtUpdateFrom As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_currency,txt_destination,txt_ship_method,flt_transit FROM Esch_Na_tbl_transit", connParam)
+            Dim dtUpdateFrom As SqlDataAdapter = New SqlDataAdapter("SELECT txt_currency,txt_destination,txt_ship_method,flt_transit FROM Esch_Na_tbl_transit", connParam)
 
             Dim dsAccess As DataSet = New DataSet
 
@@ -245,7 +245,7 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' calculate working hours, finish time,explant date and span for each order which is not cancelled or shipped and its start time no earlier than 7 days before now
     ''' </summary>
-    Public Function finishTime_exPlantDate_Span(ByRef conn As OleDbConnection, ByRef hasException As Boolean, Optional ByVal whereClauseCondition As String = " ") As String
+    Public Function finishTime_exPlantDate_Span(ByRef conn As SqlConnection, ByRef hasException As Boolean, Optional ByVal whereClauseCondition As String = " ") As String
 
         Dim msgRtrn As New StringBuilder()
 
@@ -253,8 +253,8 @@ Partial Public Class FrequentPlanActions
 
         Try
             'only do calculation for those order not cancelled or shipped and production start time not earlier than 7 days before now
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE (int_status_key Not In ('invoiced','cancelled')) And (dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-7) & dateSeparator & ") " & whereClauseCondition, conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_orders WHERE (int_status_key Not In ('invoiced','cancelled')) And (dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-7) & dateSeparator & ") " & whereClauseCondition, conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
             Dim dtTable As DataTable = New DataTable
@@ -298,19 +298,19 @@ Partial Public Class FrequentPlanActions
     ''' calculate working hours, finish time,explant date and span for each order which is not cancelled or shipped 
     ''' </summary>
     ''' <param name="limitedLine">used to load less data by narrowing down to specific production line</param>
-    Public Function finishTime_exPlantDate_Span1(ByRef conn As OleDbConnection, ByRef dtRows() As DataRow, ByRef hasException As Boolean, Optional ByVal limitedLine As String = " ", Optional ByVal whereClauseCondition As String = " ") As String
+    Public Function finishTime_exPlantDate_Span1(ByRef conn As SqlConnection, ByRef dtRows() As DataRow, ByRef hasException As Boolean, Optional ByVal limitedLine As String = " ", Optional ByVal whereClauseCondition As String = " ") As String
 
         Dim msgRtrn As New StringBuilder()
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_output_by_line_by_grade" & limitedLine, connParam)
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_output_by_line_by_item" & limitedLine, connParam)
-        Dim dtUpdateFrom3 As OleDbDataAdapter = New OleDbDataAdapter("SELECT *  FROM Esch_Na_tbl_output_by_line_only", connParam)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_output_by_line_by_grade" & limitedLine, connParam)
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_output_by_line_by_item" & limitedLine, connParam)
+        Dim dtUpdateFrom3 As SqlDataAdapter = New SqlDataAdapter("SELECT *  FROM Esch_Na_tbl_output_by_line_only", connParam)
 
-        Dim dtUpdateFrom4 As OleDbDataAdapter = New OleDbDataAdapter("SELECT *  FROM Esch_Na_tbl_Validity", conn)
-        Dim cmdbAccessCmdBuilder4 As New OleDbCommandBuilder(dtUpdateFrom4)
+        Dim dtUpdateFrom4 As SqlDataAdapter = New SqlDataAdapter("SELECT *  FROM Esch_Na_tbl_Validity", conn)
+        Dim cmdbAccessCmdBuilder4 As New SqlCommandBuilder(dtUpdateFrom4)
         dtUpdateFrom4.DeleteCommand = cmdbAccessCmdBuilder4.GetDeleteCommand()
         dtUpdateFrom4.InsertCommand = cmdbAccessCmdBuilder4.GetInsertCommand()
 
@@ -406,8 +406,8 @@ Partial Public Class FrequentPlanActions
             a.Item("int_change_over_time") = defaultChangeOvertime
 
             'a.Item("dat_finish_date") = CDate(a.Item("dat_start_date")).AddMinutes(a.Item("flt_working_hours") + a.Item("int_change_over_time"))
-			'After FANAR+ GO-LIVE, need change it to calculate start time according to finished time, backward calculation
-			a.Item("dat_start_date") = CDate(a.Item("dat_finish_date")).AddMinutes(-a.Item("flt_working_hours") - a.Item("int_change_over_time"))
+            'After FANAR+ GO-LIVE, need change it to calculate start time according to finished time, backward calculation
+            a.Item("dat_start_date") = CDate(a.Item("dat_finish_date")).AddMinutes(-a.Item("flt_working_hours") - a.Item("int_change_over_time"))
 
             a.Item("dat_new_explant") = CDate(a.Item("dat_finish_date")).AddDays(packing_QA_time).Date
             a.Item("int_span") = DateDiff(DateInterval.Day, a.Item("dat_etd"), a.Item("dat_new_explant"))
@@ -453,12 +453,12 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' additional days need to be added to explant date when consider new Shanghai customs system.also consider quality issue related part
     ''' </summary>
-    Public Function additionDaysOnExplantDate(ByRef conn As OleDbConnection, ByRef updateTo As DataTable, Optional ByVal dataviewRowstateInt As Integer = DataViewRowState.Added) As String
+    Public Function additionDaysOnExplantDate(ByRef conn As SqlConnection, ByRef updateTo As DataTable, Optional ByVal dataviewRowstateInt As Integer = DataViewRowState.Added) As String
 
 
         Dim msgRtrn As New StringBuilder()
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
         Dim dsAccess As DataSet = New DataSet
         Dim defaultDaysToAdd As Integer = CInt(valueOf("intDefautDaysAddForEx")) 'default extra days to add on finish time to get ex-plant date
@@ -474,7 +474,7 @@ Partial Public Class FrequentPlanActions
 
 
         'quality concern =================================================
-        Dim dtUpdateFrom6 As OleDbDataAdapter = New OleDbDataAdapter("SELECT *  FROM Esch_Na_tbl_qualityConcern", connParam)
+        Dim dtUpdateFrom6 As SqlDataAdapter = New SqlDataAdapter("SELECT *  FROM Esch_Na_tbl_qualityConcern", connParam)
 
 
         dtUpdateFrom6.Fill(dsAccess, "qualityConcern")
@@ -545,7 +545,7 @@ Partial Public Class FrequentPlanActions
 
 
         'considering currency and customs =================================
-        Dim dtUpdateFrom5 As OleDbDataAdapter = New OleDbDataAdapter("SELECT *  FROM Esch_Na_tbl_currencyCustoms order by extraDays DESC", connParam)
+        Dim dtUpdateFrom5 As SqlDataAdapter = New SqlDataAdapter("SELECT *  FROM Esch_Na_tbl_currencyCustoms order by extraDays DESC", connParam)
 
         dtUpdateFrom5.Fill(dsAccess, "currencyCustoms")
         Dim listOfCurrencyGroup As New List(Of String)
@@ -681,16 +681,16 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' Remark on the orders when there is any special package we need pay attention to. Or remark on the orders when there is any particular case
     ''' </summary>
-    Public Function PackageOrMiscellaneous(ByRef conn As OleDbConnection) As String
+    Public Function PackageOrMiscellaneous(ByRef conn As SqlConnection) As String
 
 
         Dim msgRtrn As New StringBuilder
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT groupName,headerName,relationOperator,conditionValue,remarkToBeAdded FROM Esch_Na_tbl_remarkPerCondition", connParam)
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT DISTINCT groupName FROM Esch_Na_tbl_remarkPerCondition", connParam)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT groupName,headerName,relationOperator,conditionValue,remarkToBeAdded FROM Esch_Na_tbl_remarkPerCondition", connParam)
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT DISTINCT groupName FROM Esch_Na_tbl_remarkPerCondition", connParam)
         Dim dsAccess As DataSet = New DataSet
 
         dtUpdateFrom0.Fill(dsAccess, "remarkPerCondition")
@@ -703,10 +703,10 @@ Partial Public Class FrequentPlanActions
         Next
 
 
-        'Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = '" & newOrderStatus & "') ", conn)
-		'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
-		Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = 'NEWnew') ", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        'Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = '" & newOrderStatus & "') ", conn)
+        'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = 'NEWnew') ", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
@@ -786,11 +786,11 @@ Partial Public Class FrequentPlanActions
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function DoAssignScrewDieAndFDA(Optional ByVal strCondition As String = "") As String
-        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-        Dim conn As OleDbConnection = New OleDbConnection(connstr)
+        Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+        Dim conn As SqlConnection = New SqlConnection(connstr)
         'Dim msg As String = AssignScrewDieAndFDA(conn, " (dat_start_date >= " & dateSeparator & Today & dateSeparator & ") " & strCondition)
-		'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
-		Dim msg As String = AssignScrewDieAndFDA(conn, " (int_status_key = 'NEWnew') " & strCondition)
+        'FANAR+ GO-LIVE, on Nov.9.2016  need UPDATE these information according to order status, if they are 'NEWnew'
+        Dim msg As String = AssignScrewDieAndFDA(conn, " (int_status_key = 'NEWnew') " & strCondition)
         conn.Dispose()
 
         Return msg
@@ -802,21 +802,21 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' decide technical parameter like screw and die and FDA for each order line based on its grade or item name
     ''' </summary>
-    Public Overloads Function AssignScrewDieAndFDA(ByRef conn As OleDbConnection, Optional ByVal filterCondition As String = " (int_status_key = '" & newOrderStatus & "') ") As String
+    Public Overloads Function AssignScrewDieAndFDA(ByRef conn As SqlConnection, Optional ByVal filterCondition As String = " (int_status_key = '" & newOrderStatus & "') ") As String
 
         Dim msgRtrn As New StringBuilder
 
         Dim startPoint As DateTime = Now.AddDays(1)
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
         Try
 
 
 
-            Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_FDA_by_grade", connParam)
-            Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_by_item", connParam)
+            Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_FDA_by_grade", connParam)
+            Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_by_item", connParam)
             Dim dsAccess As DataSet = New DataSet
 
             dtUpdateFrom0.Fill(dsAccess, "byGrade")
@@ -824,8 +824,8 @@ Partial Public Class FrequentPlanActions
 
 
             'only focus on new orders
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_grade,txt_item_no,txt_FDA,txt_process_technics  FROM  Esch_Na_tbl_orders  WHERE " & filterCondition, conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_grade,txt_item_no,txt_FDA,txt_process_technics  FROM  Esch_Na_tbl_orders  WHERE " & filterCondition, conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
             dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
@@ -884,20 +884,20 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' decide technical parameter like screw and die and FDA for each order line based on its grade or item name
     ''' </summary>
-    Public Overloads Function AssignScrewDieAndFDA(ByRef conn As OleDbConnection, ByRef dtRows() As DataRow) As String
+    Public Overloads Function AssignScrewDieAndFDA(ByRef conn As SqlConnection, ByRef dtRows() As DataRow) As String
 
         Dim msgRtrn As New StringBuilder
 
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
         Try
 
 
 
-            Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_FDA_by_grade", connParam)
-            Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_by_item", connParam)
+            Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_FDA_by_grade", connParam)
+            Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_screw_die_by_item", connParam)
             Dim dsAccess As DataSet = New DataSet
 
             dtUpdateFrom0.Fill(dsAccess, "byGrade")
@@ -947,15 +947,15 @@ Partial Public Class FrequentPlanActions
     ''' Update production progress for each order, how many percentage has the order been completed
     ''' flt_actual_completed = flt_actual_qty_from_qa / planned_production_qty
     ''' </summary>
-    Public Function UpdateOrderCompletionPercentage(ByRef conn As OleDbConnection) As String
+    Public Function UpdateOrderCompletionPercentage(ByRef conn As SqlConnection) As String
 
         Dim msgRtrn As New StringBuilder
 
         Try
 
             'only focus on those orders with RDD not earlier than one week ago
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,flt_actual_qty_man,flt_actual_completed,planned_production_qty  FROM  Esch_Na_tbl_orders  WHERE dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-7).Date & dateSeparator & "", conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,flt_actual_qty_man,flt_actual_completed,planned_production_qty  FROM  Esch_Na_tbl_orders  WHERE dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-7).Date & dateSeparator & "", conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
 
 
@@ -991,7 +991,7 @@ Partial Public Class FrequentPlanActions
     '''Update production progress for each order, how many percentage has the order been completed
     '''flt_actual_completed = flt_actual_qty_from_qa / planned_production_qty
     '''</summary>
-    Function UpdateOrderCompletionPercentage1(ByRef conn As OleDbConnection, ByRef dtRows() As DataRow) As String
+    Function UpdateOrderCompletionPercentage1(ByRef conn As SqlConnection, ByRef dtRows() As DataRow) As String
 
         Dim msgRtrn As New StringBuilder()
 
@@ -1031,12 +1031,12 @@ Partial Public Class FrequentPlanActions
     ''' <summary>
     ''' Delete those orders which's status is cancelled or invoiced
     ''' </summary>
-    Public Function deleteUponCondition(ByRef conn As OleDbConnection, Optional ByVal condition As String = "int_status_key  ='cancelled'") As Integer
+    Public Function deleteUponCondition(ByRef conn As SqlConnection, Optional ByVal condition As String = "int_status_key  ='cancelled'") As Integer
 
         deleteUponCondition = 0
         'only focus on those orders with RDD not earlier than one week ago
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key  FROM  Esch_Na_tbl_orders  WHERE  " & condition, conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key  FROM  Esch_Na_tbl_orders  WHERE  " & condition, conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand
 
 
@@ -1082,10 +1082,10 @@ Partial Public Class FrequentPlanActions
 
             Dim lines As StringBuilder = New StringBuilder
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
-            Dim command As New OleDbCommand("SELECT int_line_no,validuser FROM Esch_Na_tbl_LinesAndOwners  ", connParam)
-            Dim reader As OleDbDataReader = command.ExecuteReader()
+            Dim command As New SqlCommand("SELECT int_line_no,validuser FROM Esch_Na_tbl_LinesAndOwners  ", connParam)
+            Dim reader As SqlDataReader = command.ExecuteReader()
 
 
             lines.Append("'0','")

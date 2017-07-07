@@ -1,7 +1,7 @@
 ﻿Imports Microsoft.VisualBasic
 Imports System.Web.Caching
 Imports System.IO
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 
 Public Class PGPTbatchAndOrder
@@ -121,13 +121,13 @@ Public Class routineMaintenance
     ''' <remarks></remarks>
     Protected Sub clearAgedScrewMark()
         'get data from table Esch_Na_tbl_batch_no_group_and_batch_rules
-        Dim conn As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings("accessDB").ProviderName & ConfigurationManager.ConnectionStrings("accessDB").ConnectionString)
-        Dim dtAdapterFrom As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key FROM Esch_Na_tbl_orders ", conn)
+        Dim conn As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings("accessDB").ProviderName & ConfigurationManager.ConnectionStrings("accessDB").ConnectionString)
+        Dim dtAdapterFrom As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key FROM Esch_Na_tbl_orders ", conn)
         Dim dtTableFrom As DataTable = New DataTable
         dtAdapterFrom.Fill(dtTableFrom)
 
-        Dim dtAdapterTo1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_prductn_prmtr ", conn)
-        Dim cmdbAccessCmdBuilder1 As New OleDbCommandBuilder(dtAdapterTo1)
+        Dim dtAdapterTo1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_prductn_prmtr ", conn)
+        Dim cmdbAccessCmdBuilder1 As New SqlCommandBuilder(dtAdapterTo1)
         dtAdapterTo1.DeleteCommand = cmdbAccessCmdBuilder1.GetDeleteCommand()
         Dim dtTableTo1 As DataTable = New DataTable
         dtAdapterTo1.Fill(dtTableTo1)

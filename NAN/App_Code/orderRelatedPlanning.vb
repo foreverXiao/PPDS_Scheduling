@@ -1,5 +1,5 @@
 ﻿Imports Microsoft.VisualBasic
-Imports System.Data.OleDb
+Imports System.Data.SqlClient
 Imports System.Data
 Imports System.IO
 
@@ -24,12 +24,12 @@ Partial Public Class orderRelatedPlanning
         If True Then
             Dim compString As New StringBuilder("@")
 
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
+            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
+            Dim conn As SqlConnection = New SqlConnection(connstr)
             conn.Open()
 
-            Dim command As New OleDbCommand("Select distinct Production_line From Esch_Na_tbl_Lead_Time", conn)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand("Select distinct Production_line From Esch_Na_tbl_Lead_Time", conn)
+            Dim reader As SqlDataReader
             reader = command.ExecuteReader()
             Do While reader.Read()
                 compString.Append(reader("Production_line") & "@")
@@ -80,10 +80,10 @@ Partial Public Class orderRelatedPlanning
 
         If continued Then
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
-            Dim commandP As New OleDbCommand("Select distinct int_line_no From Esch_Na_tbl_LinesAndOwners", connParam)
-            Dim readerP As OleDbDataReader
+            Dim commandP As New SqlCommand("Select distinct int_line_no From Esch_Na_tbl_LinesAndOwners", connParam)
+            Dim readerP As SqlDataReader
             readerP = commandP.ExecuteReader()
 
             Dim compStringP As New StringBuilder("@")
@@ -126,11 +126,11 @@ Partial Public Class orderRelatedPlanning
     '''to update order status (int_status_key),whether new order, or revision order with RDD changed,order quantity changed,POD changed or shipment method changed
     ''' int_status_key 0 means new or revision,-1 means cancelled,20 means invoiced, 10 means picked
     '''</summary>
-    Public Sub NewRevisionOrderDataToMainOrderTable(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub NewRevisionOrderDataToMainOrderTable(ByRef conn As SqlConnection, ByRef msg As String)
 
         Dim sqlSelect As System.Text.StringBuilder = New System.Text.StringBuilder()
-        Dim command As New OleDbCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImportOrderMapping > 0 ORDER BY intImportOrderMapping", conn)
-        Dim reader As OleDbDataReader = command.ExecuteReader()
+        Dim command As New SqlCommand("SELECT txtFieldName FROM Esch_Na_tbl_interface_mapping WHERE intImportOrderMapping > 0 ORDER BY intImportOrderMapping", conn)
+        Dim reader As SqlDataReader = command.ExecuteReader()
         'Dim mapping1() As String = {String.Empty}, icount As Integer = 0
         While reader.Read()
             'ReDim Preserve mapping1(icount)
@@ -142,11 +142,11 @@ Partial Public Class orderRelatedPlanning
 
 
         sqlSelect.Append(" txt_order_key , txt_grade , txt_color ")
-        Dim dtUpdateFrom As OleDbDataAdapter = New OleDbDataAdapter("SELECT " & sqlSelect.ToString() & " FROM Esch_Na_Esch_Na_tbl_orders_new_revision_from_OPM", conn)
+        Dim dtUpdateFrom As SqlDataAdapter = New SqlDataAdapter("SELECT " & sqlSelect.ToString() & " FROM Esch_Na_Esch_Na_tbl_orders_new_revision_from_OPM", conn)
 
         sqlSelect.Append(" , txt_order_status,planned_production_qty,dat_finish_date,txt_order_type ")
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT " & sqlSelect.ToString() & " FROM Esch_Na_tbl_orders ", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT " & sqlSelect.ToString() & " FROM Esch_Na_tbl_orders ", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         dtUpdateTo.DeleteCommand = cmdbAccessCmdBuilder.GetDeleteCommand()
@@ -263,16 +263,16 @@ Partial Public Class orderRelatedPlanning
     '''<summary>
     ''' assign production line for new orders,calculate their working time duration. according to three tables by quantity, by grade , by item
     ''' </summary>
-    Public Sub assignLineToNewOrder(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub assignLineToNewOrder(ByRef conn As SqlConnection, ByRef msg As String)
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_order_qty", connParam)
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
-        Dim dtUpdateFrom2 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_Priority_Sequence", conn)
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_item_no,txt_grade,planned_production_qty FROM Esch_Na_tbl_orders WHERE (int_status_key = '" & newOrderStatus & "')", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_order_qty", connParam)
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_assign_line_by_grade", connParam)
+        Dim dtUpdateFrom2 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_Item_And_line_no_Priority_Sequence", conn)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_item_no,txt_grade,planned_production_qty FROM Esch_Na_tbl_orders WHERE (int_status_key = '" & newOrderStatus & "')", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -482,13 +482,13 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' Handle those new orders violating MOQ rules, put them at dummy production line and give a faraway production day
     ''' </summary>
-    Public Sub MOQappliedToNewOrder(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub MOQappliedToNewOrder(ByRef conn As SqlConnection, ByRef msg As String)
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT groupName,headerName,relationOperator,conditionValue,remarkToBeAdded FROM Esch_Na_tbl_MOQ", connParam)
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT DISTINCT groupName FROM Esch_Na_tbl_MOQ", connParam)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT groupName,headerName,relationOperator,conditionValue,remarkToBeAdded FROM Esch_Na_tbl_MOQ", connParam)
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT DISTINCT groupName FROM Esch_Na_tbl_MOQ", connParam)
         Dim dsAccess As DataSet = New DataSet
 
         dtUpdateFrom0.Fill(dsAccess, "MOQ")
@@ -501,8 +501,8 @@ Partial Public Class orderRelatedPlanning
         Next
 
 
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = '" & newOrderStatus & "') ", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_remark " & sqlSelect.ToString & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key = '" & newOrderStatus & "') ", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
@@ -580,13 +580,13 @@ Partial Public Class orderRelatedPlanning
     ''' do some preparation for futher automatic scheduling, such as update standard leadtime for those VIP orders,
     ''' and update field txt_auxiliary_code for further proceedings
     ''' </summary>
-    Public Sub Preparation_For_Automatic_scheduling(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub Preparation_For_Automatic_scheduling(ByRef conn As SqlConnection, ByRef msg As String)
 
-        Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+        Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
         connParam.Open()
 
-        Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_VIP_lead_time ORDER BY DaysOfCommittedLeadtime DESC,VIPgroup ASC", connParam)  'sort the data in order to make the shortest lead time VIP prioritized
-        Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT [VIPleadtimeTable].VIPgroup FROM (SELECT VIPgroup, avg(DaysOfCommittedLeadtime) AS leadtimeDesc FROM Esch_Na_tbl_VIP_lead_time GROUP BY VIPgroup)  AS VIPleadtimeTable ORDER BY [VIPleadtimeTable].leadtimeDesc DESC", connParam)
+        Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_VIP_lead_time ORDER BY DaysOfCommittedLeadtime DESC,VIPgroup ASC", connParam)  'sort the data in order to make the shortest lead time VIP prioritized
+        Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT [VIPleadtimeTable].VIPgroup FROM (SELECT VIPgroup, avg(DaysOfCommittedLeadtime) AS leadtimeDesc FROM Esch_Na_tbl_VIP_lead_time GROUP BY VIPgroup)  AS VIPleadtimeTable ORDER BY [VIPleadtimeTable].leadtimeDesc DESC", connParam)
         Dim dsAccess As DataSet = New DataSet
 
         'get the list of column name to be used to identify VIP customer
@@ -600,8 +600,8 @@ Partial Public Class orderRelatedPlanning
 
 
         'scope will cover those start time not earlier than yesterday and those new orders, all shipped or cancelled are excluded.
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,txt_order_type,int_status_key,txt_VIP,txt_auxiliary_code,lng_VIP_lead_time,lng_AdvanceOfRevision " & sqlSelect.ToString() & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-1) & dateSeparator & "))", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,txt_order_type,int_status_key,txt_VIP,txt_auxiliary_code,lng_VIP_lead_time,lng_AdvanceOfRevision " & sqlSelect.ToString() & " FROM  Esch_Na_tbl_orders  WHERE (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_start_date > " & dateSeparator & DateTime.Today.AddDays(-1) & dateSeparator & "))", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
@@ -705,18 +705,18 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' return the number representing the reserved capacity for VIP customers every week
     ''' </summary>
-    Public Function reservedCapForVIP(ByRef conn As OleDbConnection) As Long
+    Public Function reservedCapForVIP(ByRef conn As SqlConnection) As Long
 
 
         reservedCapForVIP = 0
 
         If CBool(valueOf("bnlReserveCapForVIP")) Then  'if you decide to reserve capacity for VIP customers
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
 
-            Dim command As New OleDbCommand("SELECT sum(ReservedCap) AS sumReservedCap FROM (SELECT Avg(ReservedCapPerWeek) as ReservedCap  From Esch_Na_tbl_VIP_lead_time GROUP BY VIPgroup)", conn)
-            Dim reader As OleDbDataReader
+            Dim command As New SqlCommand("SELECT sum(ReservedCap) AS sumReservedCap FROM (SELECT Avg(ReservedCapPerWeek) as ReservedCap  From Esch_Na_tbl_VIP_lead_time GROUP BY VIPgroup)", conn)
+            Dim reader As SqlDataReader
             reader = command.ExecuteReader()
             If reader.Read() Then reservedCapForVIP = CLng(reader("sumReservedCap"))
             reader.Close()
@@ -733,11 +733,11 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' Use to calculate leadtime per line per line group based on the setting in the table Esch_Na_tbl_Lead_Time
     ''' </summary>
-    Public Sub calculateLeadtime(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub calculateLeadtime(ByRef conn As SqlConnection, ByRef msg As String)
 
         'scope will cover those start time not earlier than now and those new orders and txt_auxiliary_code is Null, all shipped or cancelled are excluded.
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_auxiliary_code,int_status_key,txt_VIP,lng_VIP_lead_time,lng_AdvanceOfRevision FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_start_date > " & dateSeparator & DateTime.Now & dateSeparator & "))", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,int_line_no,dat_start_date,txt_auxiliary_code,int_status_key,txt_VIP,lng_VIP_lead_time,lng_AdvanceOfRevision FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_start_date > " & dateSeparator & DateTime.Now & dateSeparator & "))", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -851,17 +851,17 @@ Partial Public Class orderRelatedPlanning
         If Cache("Leadtime") Is Nothing Then
 
             Dim db As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ConnectionString
-            Dim connstr As String = ConfigurationManager.ConnectionStrings(dbConnectionName).ProviderName & db
+            Dim connstr As String = db
 
-            Dim conn As OleDbConnection = New OleDbConnection(connstr)
+            Dim conn As SqlConnection = New SqlConnection(connstr)
             conn.Open()
 
-            Dim connParam As OleDbConnection = New OleDbConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ProviderName & ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
+            Dim connParam As SqlConnection = New SqlConnection(ConfigurationManager.ConnectionStrings(dbConnForParam).ConnectionString)
             connParam.Open()
 
-            Dim dtUpdateFrom0 As OleDbDataAdapter = New OleDbDataAdapter("SELECT * FROM Esch_Na_tbl_Lead_Time", conn)
+            Dim dtUpdateFrom0 As SqlDataAdapter = New SqlDataAdapter("SELECT * FROM Esch_Na_tbl_Lead_Time", conn)
 
-            Dim dtUpdateFrom1 As OleDbDataAdapter = New OleDbDataAdapter("SELECT max(ReservedCapPerWeek) AS weeklyMax FROM Esch_Na_tbl_VIP_lead_time Group By VIPgroup", connParam)
+            Dim dtUpdateFrom1 As SqlDataAdapter = New SqlDataAdapter("SELECT max(ReservedCapPerWeek) AS weeklyMax FROM Esch_Na_tbl_VIP_lead_time Group By VIPgroup", connParam)
 
             Dim dsAccess As DataSet = New DataSet
 
@@ -945,14 +945,14 @@ Partial Public Class orderRelatedPlanning
     ''' reasign a start time to those  orders
     ''' old VIP order and rev VIP orders --> new VIP orders --> old Non-VIP and rev Non-VIP --> new Non-VIP
     ''' </summary>
-    Public Sub get_Orders_Start_Time(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub get_Orders_Start_Time(ByRef conn As SqlConnection, ByRef msg As String)
 
         'Try
 
         'scope will cover those start time not earlier than now and those new orders and txt_auxiliary_code is Null, all shipped or cancelled are excluded.
         Dim startNow As DateTime = DateTime.Now()
-        Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,flt_unallocate_qty,int_line_no,dat_start_date,txt_auxiliary_code,int_span,int_status_key,txt_VIP,lng_VIP_lead_time,lng_AdvanceOfRevision,dat_order_added,dat_etd FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_finish_date > " & dateSeparator & startNow.Date & dateSeparator & "))", conn)
-        Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+        Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,flt_unallocate_qty,int_line_no,dat_start_date,txt_auxiliary_code,int_span,int_status_key,txt_VIP,lng_VIP_lead_time,lng_AdvanceOfRevision,dat_order_added,dat_etd FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key Not In ('invoiced','cancelled')) And ((dat_start_date Is Null) Or (dat_finish_date > " & dateSeparator & startNow.Date & dateSeparator & "))", conn)
+        Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
         dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
         dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
         Dim dsAccess As DataSet = New DataSet
@@ -1193,12 +1193,12 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' give high priority to new sample orders, price = 0,txt_local_so Like 'FN%',txt_local_so Like '%SMP%'
     ''' </summary>
-    Public Sub scheduleFreeSampleStartTime(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub scheduleFreeSampleStartTime(ByRef conn As SqlConnection, ByRef msg As String)
 
         Try
 
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,dat_start_date,dat_etd,txt_remark  FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key = '" & newOrderStatus & "') And ((txt_local_so Like 'FN%') Or (txt_local_so Like '%SMP%') Or (flt_sales_price = 0))", conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,dat_start_date,dat_etd,txt_remark  FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key = '" & newOrderStatus & "') And ((txt_local_so Like 'FN%') Or (txt_local_so Like '%SMP%') Or (flt_sales_price = 0))", conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
             dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
             Dim dsAccess As DataSet = New DataSet
@@ -1236,14 +1236,14 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' delay start time for those orders without payment (Need exclude free sample orders price = 0,txt_local_so Like 'FN%',txt_local_so Like '%SMP%')
     ''' </summary>
-    Public Sub paymentTermsCheck(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub paymentTermsCheck(ByRef conn As SqlConnection, ByRef msg As String)
 
         Try
 
             Dim paymentTerms As String = "('" & valueOf("strPaymentTermsList").Replace(" ", "").Replace(",", "','") & "')"
 
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT txt_order_key,dat_start_date,txt_payment_status  FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key = '" & newOrderStatus & "') And Not ((txt_local_so Like 'FN%') Or (txt_local_so Like '%SMP%') Or (flt_sales_price = 0)) And txt_payment_term In " & paymentTerms, conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT txt_order_key,dat_start_date,txt_payment_status  FROM  Esch_Na_tbl_orders  WHERE (int_line_no <> " & valueOf("intDummyLine") & " ) And (int_status_key = '" & newOrderStatus & "') And Not ((txt_local_so Like 'FN%') Or (txt_local_so Like '%SMP%') Or (flt_sales_price = 0)) And txt_payment_term In " & paymentTerms, conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
             dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
             Dim dsAccess As DataSet = New DataSet
@@ -1284,12 +1284,12 @@ Partial Public Class orderRelatedPlanning
     ''' <summary>
     ''' Need resolve the updated lead time back to table Esch_Na_tbl_Lead_Time
     ''' </summary>
-    Public Sub resolveLeadtimeBackToTable(ByRef conn As OleDbConnection, ByRef msg As String)
+    Public Sub resolveLeadtimeBackToTable(ByRef conn As SqlConnection, ByRef msg As String)
 
         Try
 
-            Dim dtUpdateTo As OleDbDataAdapter = New OleDbDataAdapter("SELECT *  FROM  Esch_Na_tbl_Lead_Time", conn)
-            Dim cmdbAccessCmdBuilder As New OleDbCommandBuilder(dtUpdateTo)
+            Dim dtUpdateTo As SqlDataAdapter = New SqlDataAdapter("SELECT *  FROM  Esch_Na_tbl_Lead_Time", conn)
+            Dim cmdbAccessCmdBuilder As New SqlCommandBuilder(dtUpdateTo)
             dtUpdateTo.UpdateCommand = cmdbAccessCmdBuilder.GetUpdateCommand()
             dtUpdateTo.InsertCommand = cmdbAccessCmdBuilder.GetInsertCommand()
 
